@@ -1,15 +1,14 @@
 package com.hgm.plugins
 
-import com.hgm.routes.registerUser
+import com.hgm.repository.user.UserRepository
+import com.hgm.routes.userRoutes
 import io.ktor.application.*
-import io.ktor.http.*
-import io.ktor.http.content.*
-import io.ktor.request.*
-import io.ktor.response.*
 import io.ktor.routing.*
+import org.koin.ktor.ext.inject
 
 fun Application.configureRouting() {
+    val userRepository:UserRepository by inject()
     routing {
-        registerUser()
+        userRoutes(userRepository)
     }
 }

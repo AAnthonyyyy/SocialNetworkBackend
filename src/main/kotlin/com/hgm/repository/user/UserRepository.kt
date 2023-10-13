@@ -1,8 +1,8 @@
-package com.hgm.controller.user
+package com.hgm.repository.user
 
 import com.hgm.data.models.User
 
-interface UserController {
+interface UserRepository {
 
     suspend fun createUser(user: User)
 

@@ -1,7 +1,6 @@
 package com.hgm.routes
 
-import com.hgm.controller.user.UserController
-import com.hgm.controller.user.UserControllerImpl
+import com.hgm.repository.user.UserRepository
 import com.hgm.data.models.User
 import com.hgm.data.requests.RegisterAccountRequest
 import com.hgm.data.responses.BaseResponse
@@ -13,11 +12,10 @@ import io.ktor.http.*
 import io.ktor.request.*
 import io.ktor.response.*
 import io.ktor.routing.*
-import org.koin.ktor.ext.inject
 
-fun Route.registerUser() {
-    val userController: UserController by inject()
-
+fun Route.userRoutes(
+    userRepository: UserRepository
+) {
     post("/api/user/register") {
         //接收json请求并转换成对应的数据类型
         val request = call.receiveOrNull<RegisterAccountRequest>() ?: kotlin.run {
@@ -38,7 +36,7 @@ fun Route.registerUser() {
         }
 
         //验证用户是否已经存在
-        val userExist = userController.getUserByEmail(request.email) != null
+        val userExist = userRepository.getUserByEmail(request.email) != null
         if (userExist) {
             call.respond(
                 BaseResponse(
@@ -51,7 +49,7 @@ fun Route.registerUser() {
 
 
         //验证成功
-        userController.createUser(
+        userRepository.createUser(
             User(
                 email = request.email,
                 username = request.username,

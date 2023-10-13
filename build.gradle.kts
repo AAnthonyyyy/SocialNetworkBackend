@@ -38,7 +38,7 @@ dependencies {
 
     // KMongo
     implementation("org.litote.kmongo:kmongo:$kmongo_version")
-    // Koin core features
+    // Koin features
     implementation("io.insert-koin:koin-core:$koin_version")
     implementation("io.insert-koin:koin-ktor:$koin_version")
     implementation("io.insert-koin:koin-logger-slf4j:$koin_version")

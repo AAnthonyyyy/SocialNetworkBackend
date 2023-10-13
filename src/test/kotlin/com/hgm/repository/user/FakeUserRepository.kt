@@ -1,11 +1,12 @@
 package com.hgm.repository.user
 
 import com.hgm.data.models.User
+import com.hgm.data.repository.user.UserRepository
 
 /**
  * 模拟真实环境，编写测试用例
  */
-class FakeUserRepository :UserRepository{
+class FakeUserRepository : UserRepository {
 
     val users= mutableListOf<User>()
 

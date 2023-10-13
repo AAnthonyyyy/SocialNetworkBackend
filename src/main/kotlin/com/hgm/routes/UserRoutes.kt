@@ -1,6 +1,6 @@
 package com.hgm.routes
 
-import com.hgm.repository.user.UserRepository
+import com.hgm.data.repository.user.UserRepository
 import com.hgm.data.models.User
 import com.hgm.data.requests.RegisterAccountRequest
 import com.hgm.data.responses.BaseResponse

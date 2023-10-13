@@ -1,4 +1,4 @@
-package com.hgm.repository.user
+package com.hgm.data.repository.user
 
 import com.hgm.data.models.User
 import org.litote.kmongo.coroutine.CoroutineDatabase

@@ -3,7 +3,7 @@ package com.hgm.routes
 import com.google.common.truth.Truth.assertThat
 import com.google.gson.Gson
 import com.hgm.data.models.User
-import com.hgm.data.requests.RegisterAccountRequest
+import com.hgm.data.requests.CreateRequest
 import com.hgm.data.responses.BaseResponse
 import com.hgm.di.testModule
 import com.hgm.plugins.configureSerialization
@@ -14,6 +14,7 @@ import io.ktor.routing.*
 import io.ktor.server.testing.*
 import kotlinx.coroutines.runBlocking
 import org.koin.core.context.startKoin
+import org.koin.core.context.stopKoin
 import org.koin.test.KoinTest
 import org.koin.test.inject
 import kotlin.test.BeforeTest
@@ -32,12 +33,17 @@ internal class RegisterUserRouteTest : KoinTest {
         }
     }
 
+    @BeforeTest
+    fun tearDown(){
+        stopKoin()
+    }
+
     @Test
     fun `测试一：发起注册请求，但是没有附加主体，返回BadRequest`() {
         withTestApplication(
             moduleFunction = {
                 install(Routing) {
-                    userRoutes(userRepository)
+                    registerUser(userRepository)
                 }
             }
         ) {
@@ -72,7 +78,7 @@ internal class RegisterUserRouteTest : KoinTest {
             moduleFunction = {
                 configureSerialization()
                 install(Routing) {
-                    userRoutes(userRepository)
+                    registerUser(userRepository)
                 }
             }
         ) {
@@ -83,7 +89,7 @@ internal class RegisterUserRouteTest : KoinTest {
             ) {
                 // 添加body并转成json上传
                 addHeader("Content-Type","application/json")
-                val request = RegisterAccountRequest(
+                val request = CreateRequest(
                     email = "test@test.com",
                     username = "test",
                     password = "test",
@@ -109,7 +115,7 @@ internal class RegisterUserRouteTest : KoinTest {
             moduleFunction = {
                 configureSerialization()
                 install(Routing) {
-                    userRoutes(userRepository)
+                    registerUser(userRepository)
                 }
             }
         ) {
@@ -120,7 +126,7 @@ internal class RegisterUserRouteTest : KoinTest {
             ) {
                 // 添加body并转成json上传
                 addHeader("Content-Type","application/json")
-                val request = RegisterAccountRequest(
+                val request = CreateRequest(
                     email = "",
                     username = "",
                     password = "",
@@ -145,7 +151,7 @@ internal class RegisterUserRouteTest : KoinTest {
             moduleFunction = {
                 configureSerialization()
                 install(Routing) {
-                    userRoutes(userRepository)
+                    registerUser(userRepository)
                 }
             }
         ) {
@@ -156,7 +162,7 @@ internal class RegisterUserRouteTest : KoinTest {
             ) {
                 // 添加body并转成json上传
                 addHeader("Content-Type","application/json")
-                val request = RegisterAccountRequest(
+                val request = CreateRequest(
                     email = "111",
                     username = "111",
                     password = "111",

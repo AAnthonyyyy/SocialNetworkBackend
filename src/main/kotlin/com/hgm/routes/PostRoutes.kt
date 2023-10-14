@@ -1,9 +1,8 @@
 package com.hgm.routes
 
-import com.hgm.data.models.Post
-import com.hgm.data.repository.post.PostRepository
 import com.hgm.data.requests.CreatePostRequest
 import com.hgm.data.responses.BaseResponse
+import com.hgm.service.PostService
 import com.hgm.util.ApiMessage.CREATE_POST_SUCCESSFUL
 import com.hgm.util.ApiMessage.USER_NOT_FOUND
 import io.ktor.application.*
@@ -12,22 +11,15 @@ import io.ktor.request.*
 import io.ktor.response.*
 import io.ktor.routing.*
 
-fun Route.createPost(postRepository: PostRepository) {
+fun Route.createPost(postService: PostService) {
     post("/api/post/create") {
         val request = call.receiveOrNull<CreatePostRequest>() ?: kotlin.run {
             call.respond(HttpStatusCode.BadRequest)
             return@post
         }
 
-        val didUserExist = postRepository.createPost(
-            Post(
-                userId = request.userId,
-                imageUrl = "",
-                description = request.description,
-                timestamp = System.currentTimeMillis()
-            )
-        )
-        if (!didUserExist) {
+        val doesUserExist = postService.createPost(request)
+        if (!doesUserExist) {
             call.respond(
                 HttpStatusCode.OK,
                 BaseResponse(

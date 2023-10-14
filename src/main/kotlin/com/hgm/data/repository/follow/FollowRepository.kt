@@ -2,12 +2,12 @@ package com.hgm.data.repository.follow
 
 interface FollowRepository {
 
-    suspend fun followUser(
+    suspend fun followUserIfExist(
         followingUserId: String,
         followedUserId: String
     ):Boolean
 
-    suspend fun unFollowUser(
+    suspend fun unFollowUserIfExist(
         followingUserId: String,
         followedUserId: String
     ):Boolean

@@ -3,7 +3,7 @@ package com.hgm.routes
 import com.google.common.truth.Truth.assertThat
 import com.google.gson.Gson
 import com.hgm.data.models.User
-import com.hgm.data.requests.CreateRequest
+import com.hgm.data.requests.CreateAccountRequest
 import com.hgm.data.responses.BaseResponse
 import com.hgm.di.testModule
 import com.hgm.plugins.configureSerialization
@@ -89,7 +89,7 @@ internal class RegisterUserRouteTest : KoinTest {
             ) {
                 // 添加body并转成json上传
                 addHeader("Content-Type","application/json")
-                val request = CreateRequest(
+                val request = CreateAccountRequest(
                     email = "test@test.com",
                     username = "test",
                     password = "test",
@@ -126,7 +126,7 @@ internal class RegisterUserRouteTest : KoinTest {
             ) {
                 // 添加body并转成json上传
                 addHeader("Content-Type","application/json")
-                val request = CreateRequest(
+                val request = CreateAccountRequest(
                     email = "",
                     username = "",
                     password = "",
@@ -162,7 +162,7 @@ internal class RegisterUserRouteTest : KoinTest {
             ) {
                 // 添加body并转成json上传
                 addHeader("Content-Type","application/json")
-                val request = CreateRequest(
+                val request = CreateAccountRequest(
                     email = "111",
                     username = "111",
                     password = "111",

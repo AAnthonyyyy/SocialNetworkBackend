@@ -1,9 +1,8 @@
 package com.hgm.routes
 
-import com.hgm.data.repository.follow.FollowRepository
 import com.hgm.data.requests.FollowRequest
 import com.hgm.data.responses.BaseResponse
-import com.hgm.util.ApiMessage
+import com.hgm.service.FollowService
 import com.hgm.util.ApiMessage.FOLLOWING_SUCCESSFUL
 import com.hgm.util.ApiMessage.UNFOLLOWING_SUCCESSFUL
 import com.hgm.util.ApiMessage.USER_NOT_FOUND
@@ -14,18 +13,15 @@ import io.ktor.response.*
 import io.ktor.routing.*
 
 
-fun Route.followUser(followRepository: FollowRepository) {
+fun Route.followUser(followService: FollowService) {
     post("/api/following/follow") {
         val request = call.receiveOrNull<FollowRequest>() ?: kotlin.run {
             call.respond(HttpStatusCode.BadRequest)
             return@post
         }
 
-        val didUserExist = followRepository.followUser(
-            request.followingUserId,
-            request.followedUserId
-        )
-        if (didUserExist) {
+        val doesUserExist = followService.followUserIfExist(request)
+        if (doesUserExist) {
             call.respond(
                 HttpStatusCode.OK,
                 BaseResponse(
@@ -46,17 +42,14 @@ fun Route.followUser(followRepository: FollowRepository) {
 }
 
 
-fun Route.unfollowUser(followRepository: FollowRepository) {
+fun Route.unfollowUser(followService: FollowService) {
     delete("/api/following/unfollow") {
         val request = call.receiveOrNull<FollowRequest>() ?: kotlin.run {
             call.respond(HttpStatusCode.BadRequest)
             return@delete
         }
 
-        val didUserExist = followRepository.unFollowUser(
-            request.followingUserId,
-            request.followedUserId
-        )
+        val didUserExist = followService.unfollowUserIfExist(request)
         if (didUserExist) {
             call.respond(
                 HttpStatusCode.OK,

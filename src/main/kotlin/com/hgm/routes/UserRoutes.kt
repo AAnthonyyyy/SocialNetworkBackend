@@ -5,11 +5,11 @@ import com.hgm.data.models.User
 import com.hgm.data.requests.CreateRequest
 import com.hgm.data.requests.LoginRequest
 import com.hgm.data.responses.BaseResponse
-import com.hgm.util.ApiResponse.FIELDS_BLANK
-import com.hgm.util.ApiResponse.LOGIN_SUCCESSFUL
-import com.hgm.util.ApiResponse.LOGIN_FAILED
-import com.hgm.util.ApiResponse.REGISTER_SUCCESSFUL
-import com.hgm.util.ApiResponse.EMAIL_ALREADY_EXIST
+import com.hgm.util.ApiMessage.FIELDS_BLANK
+import com.hgm.util.ApiMessage.LOGIN_SUCCESSFUL
+import com.hgm.util.ApiMessage.LOGIN_FAILED
+import com.hgm.util.ApiMessage.REGISTER_SUCCESSFUL
+import com.hgm.util.ApiMessage.EMAIL_ALREADY_EXIST
 import io.ktor.application.*
 import io.ktor.http.*
 import io.ktor.request.*

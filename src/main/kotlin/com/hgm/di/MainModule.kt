@@ -1,5 +1,7 @@
 package com.hgm.di
 
+import com.hgm.data.repository.follow.FollowRepository
+import com.hgm.data.repository.follow.FollowRepositoryImpl
 import com.hgm.data.repository.user.UserRepository
 import com.hgm.data.repository.user.UserRepositoryImpl
 import com.hgm.util.Constants.DATABASE_NAME
@@ -17,5 +19,9 @@ val mainModule = module {
 
     single<UserRepository> {
         UserRepositoryImpl(get())
+    }
+
+    single<FollowRepository> {
+        FollowRepositoryImpl(get())
     }
 }

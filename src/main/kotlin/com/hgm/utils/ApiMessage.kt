@@ -1,4 +1,4 @@
-package com.hgm.util
+package com.hgm.utils
 
 
 /**

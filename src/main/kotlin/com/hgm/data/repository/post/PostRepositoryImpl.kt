@@ -14,6 +14,7 @@ class PostRepositoryImpl(
     private val posts = db.getCollection<Post>()
     private val users = db.getCollection<User>()
     private val following = db.getCollection<Following>()
+
     override suspend fun createPost(post: Post): Boolean {
         //检查用户是否存在
         val doesUserExist = users.findOneById(post.userId) != null
@@ -28,7 +29,7 @@ class PostRepositoryImpl(
         posts.deleteOneById(postId)
     }
 
-    override suspend fun getPostFromFollows(
+    override suspend fun getPostsFromFollows(
         userId: String,
         page: Int,
         pageSize: Int

@@ -3,6 +3,7 @@ package com.hgm.service
 import com.hgm.data.models.Post
 import com.hgm.data.repository.post.PostRepository
 import com.hgm.data.requests.CreatePostRequest
+import com.hgm.utils.Constants
 
 class PostService(
     private val repository: PostRepository
@@ -17,5 +18,14 @@ class PostService(
                 timestamp = System.currentTimeMillis()
             )
         )
+    }
+
+
+    suspend fun getPostsFromFollows(
+        userId: String,
+        page: Int = Constants.DEFAULT_POST_PAGE,
+        pageSize: Int = Constants.DEFAULT_POST_PAGE_SIZE
+    ):List<Post>{
+        return repository.getPostsFromFollows(userId, page, pageSize)
     }
 }

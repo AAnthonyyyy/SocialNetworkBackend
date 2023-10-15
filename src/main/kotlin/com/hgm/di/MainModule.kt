@@ -9,7 +9,7 @@ import com.hgm.data.repository.user.UserRepositoryImpl
 import com.hgm.service.FollowService
 import com.hgm.service.PostService
 import com.hgm.service.UserService
-import com.hgm.util.Constants.DATABASE_NAME
+import com.hgm.utils.Constants.DATABASE_NAME
 import org.koin.dsl.module
 import org.litote.kmongo.coroutine.coroutine
 import org.litote.kmongo.reactivestreams.KMongo

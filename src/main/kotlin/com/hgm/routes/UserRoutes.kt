@@ -10,11 +10,10 @@ import com.hgm.service.UserService
 import com.hgm.service.UserService.ValidationEvent.Success
 import com.hgm.service.UserService.ValidationEvent.FieldEmpty
 import com.hgm.service.UserService.ValidationEvent.UserExist
-import com.hgm.util.ApiMessage.EMAIL_ALREADY_EXIST
-import com.hgm.util.ApiMessage.FIELDS_BLANK
-import com.hgm.util.ApiMessage.LOGIN_SUCCESSFUL
-import com.hgm.util.ApiMessage.LOGIN_FAILED
-import com.hgm.util.ApiMessage.REGISTER_SUCCESSFUL
+import com.hgm.utils.ApiMessage.EMAIL_ALREADY_EXIST
+import com.hgm.utils.ApiMessage.FIELDS_BLANK
+import com.hgm.utils.ApiMessage.LOGIN_FAILED
+import com.hgm.utils.ApiMessage.REGISTER_SUCCESSFUL
 import io.ktor.application.*
 import io.ktor.http.*
 import io.ktor.request.*

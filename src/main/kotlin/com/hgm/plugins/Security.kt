@@ -34,3 +34,7 @@ fun Application.configureSecurity() {
         }
     }
 }
+
+// 快速获取邮箱，以便全局路由都可以用到
+val JWTPrincipal.email: String?
+    get() = getClaim("email", String::class)

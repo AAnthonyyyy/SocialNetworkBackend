@@ -33,5 +33,6 @@ fun Application.configureRouting() {
 
         //帖子路由
         createPost(postService, userService)
+        getPostsFromFollows(postService,userService)
     }
 }

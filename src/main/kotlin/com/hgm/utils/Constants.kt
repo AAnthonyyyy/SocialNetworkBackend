@@ -1,4 +1,4 @@
-package com.hgm.util
+package com.hgm.utils
 
 object Constants {
     const val DATABASE_NAME = "social_network_backend"

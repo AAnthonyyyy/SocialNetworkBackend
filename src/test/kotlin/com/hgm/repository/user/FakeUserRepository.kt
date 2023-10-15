@@ -22,7 +22,7 @@ class FakeUserRepository : UserRepository {
         return users.find { it.email == email }
     }
 
-    override suspend fun doesPasswordForUserMatch(email: String, enterPassword: String): Boolean {
+    override suspend fun doesPasswordMatchForUser(email: String, enterPassword: String): Boolean {
         val user=getUserByEmail(email)
         return user?.password==enterPassword
     }

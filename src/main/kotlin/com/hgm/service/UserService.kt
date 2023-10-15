@@ -3,6 +3,8 @@ package com.hgm.service
 import com.hgm.data.models.User
 import com.hgm.data.repository.user.UserRepository
 import com.hgm.data.requests.CreateAccountRequest
+import com.hgm.data.requests.CreatePostRequest
+import com.hgm.data.requests.LoginRequest
 
 class UserService(
     private val repository: UserRepository
@@ -35,6 +37,17 @@ class UserService(
                 linkedInUrl = ""
             )
         )
+    }
+
+    suspend fun doesPasswordMatchForUser(request: LoginRequest): Boolean {
+        return repository.doesPasswordMatchForUser(
+            email = request.email,
+            enterPassword = request.password
+        )
+    }
+
+    suspend fun doesEmailBelongToUserId(email: String, userId: String): Boolean {
+        return repository.doesEmailBelongToUserId(email, userId)
     }
 
 

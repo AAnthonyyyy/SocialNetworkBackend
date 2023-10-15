@@ -34,3 +34,6 @@ out/
 
 ### VS Code ###
 .vscode/
+
+### 配置信息 ###
+/src/main/resources/application.conf

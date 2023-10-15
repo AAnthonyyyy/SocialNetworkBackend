@@ -1,8 +1,10 @@
 package com.hgm.routes
 
-import com.hgm.data.repository.user.UserRepository
+import com.auth0.jwt.JWT
+import com.auth0.jwt.algorithms.Algorithm
 import com.hgm.data.requests.CreateAccountRequest
 import com.hgm.data.requests.LoginRequest
+import com.hgm.data.responses.AuthResponse
 import com.hgm.data.responses.BaseResponse
 import com.hgm.service.UserService
 import com.hgm.service.UserService.ValidationEvent.Success
@@ -18,6 +20,7 @@ import io.ktor.http.*
 import io.ktor.request.*
 import io.ktor.response.*
 import io.ktor.routing.*
+import java.util.*
 
 /** 注册 */
 fun Route.registerUser(
@@ -32,7 +35,7 @@ fun Route.registerUser(
 
         // 验证创建请求
         when (userService.validateCreateRequest(request)) {
-            is UserExist ->{
+            is UserExist -> {
                 call.respond(
                     HttpStatusCode.BadRequest,
                     BaseResponse(
@@ -42,6 +45,7 @@ fun Route.registerUser(
                 )
                 return@post
             }
+
             is FieldEmpty -> {
                 call.respond(
                     HttpStatusCode.BadRequest,
@@ -52,6 +56,7 @@ fun Route.registerUser(
                 )
                 return@post
             }
+
             is Success -> {
                 userService.createAccount(request)
                 call.respond(
@@ -68,7 +73,10 @@ fun Route.registerUser(
 
 /** 登录 */
 fun Route.loginUser(
-    userRepository: UserRepository
+    userService: UserService,
+    jwtAudience: String,
+    jwtIssuer: String,
+    jwtSecret: String
 ) {
     post("/api/user/login") {
         val request = call.receiveOrNull<LoginRequest>() ?: kotlin.run {
@@ -81,22 +89,24 @@ fun Route.loginUser(
             return@post
         }
 
-        val doesPasswordMatch = userRepository.doesPasswordForUserMatch(
-            email = request.email,
-            enterPassword = request.password
-        )
-
+        val doesPasswordMatch = userService.doesPasswordMatchForUser(request)
         if (doesPasswordMatch) {
+            // 生成Token
+            val expiresIn = 1000L * 60L * 60L * 24L * 365L
+            val token = JWT.create()
+                .withAudience(jwtAudience)
+                .withIssuer(jwtIssuer)
+                .withExpiresAt(Date(System.currentTimeMillis() + expiresIn))
+                .withClaim("email", request.email)
+                .sign(Algorithm.HMAC256(jwtSecret))
+
             call.respond(
                 HttpStatusCode.OK,
-                BaseResponse(
-                    successful = true,
-                    message = LOGIN_SUCCESSFUL
-                )
+                AuthResponse(token = token)
             )
         } else {
             call.respond(
-                HttpStatusCode.BadRequest,
+                HttpStatusCode.OK,
                 BaseResponse(
                     successful = false,
                     message = LOGIN_FAILED

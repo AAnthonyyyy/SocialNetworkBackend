@@ -10,8 +10,11 @@ interface UserRepository {
 
     suspend fun getUserByEmail(email: String): User?
 
-    suspend fun doesPasswordForUserMatch(
+    suspend fun doesPasswordMatchForUser(
         email: String,
         enterPassword: String
     ): Boolean
+
+
+    suspend fun doesEmailBelongToUserId(email: String, userId: String): Boolean
 }

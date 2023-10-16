@@ -13,6 +13,7 @@ import com.hgm.utils.ApiResponseMessage.FIELDS_BLANK
 import com.hgm.utils.ApiResponseMessage.LOGIN_FAILED
 import com.hgm.utils.ApiResponseMessage.REGISTER_SUCCESSFUL
 import com.hgm.utils.Constants
+import com.hgm.utils.userId
 import io.ktor.application.*
 import io.ktor.http.*
 import io.ktor.request.*
@@ -87,6 +88,18 @@ fun Route.loginUser(
             return@post
         }
 
+        val user = userService.getUserByEmail(request.email) ?: kotlin.run {
+            call.respond(
+                HttpStatusCode.OK,
+                BaseResponse(
+                    successful = false,
+                    message = LOGIN_FAILED
+                )
+            )
+            return@post
+        }
+
+
         val doesPasswordMatch = userService.doesPasswordMatchForUser(request)
         if (doesPasswordMatch) {
             // 生成Token
@@ -95,7 +108,7 @@ fun Route.loginUser(
                 .withAudience(jwtAudience)
                 .withIssuer(jwtIssuer)
                 .withExpiresAt(Date(System.currentTimeMillis() + expiresIn))
-                .withClaim(Constants.KEY_CLAIM_EMAIL, request.email)
+                .withClaim(Constants.KEY_CLAIM_USER_ID, user.id)
                 .sign(Algorithm.HMAC256(jwtSecret))
 
             call.respond(

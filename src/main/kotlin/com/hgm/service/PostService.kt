@@ -9,10 +9,10 @@ class PostService(
     private val repository: PostRepository
 ) {
 
-    suspend fun createPost(request: CreatePostRequest): Boolean {
+    suspend fun createPost(request: CreatePostRequest,userId: String): Boolean {
         return repository.createPost(
             Post(
-                userId = request.userId,
+                userId = userId,
                 imageUrl = "",
                 description = request.description,
                 timestamp = System.currentTimeMillis()

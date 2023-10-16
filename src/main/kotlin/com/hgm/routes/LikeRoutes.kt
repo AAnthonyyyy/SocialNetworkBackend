@@ -3,10 +3,9 @@ package com.hgm.routes
 import com.hgm.data.requests.LikeRequest
 import com.hgm.data.responses.BaseResponse
 import com.hgm.service.LikeService
-import com.hgm.service.PostService
 import com.hgm.service.UserService
 import com.hgm.utils.ApiResponseMessage
-import com.hgm.utils.ifEmailBelongsToUser
+import com.hgm.utils.userId
 import io.ktor.application.*
 import io.ktor.auth.*
 import io.ktor.http.*
@@ -16,7 +15,6 @@ import io.ktor.routing.*
 
 fun Route.likePost(
     likeService: LikeService,
-    userService: UserService
 ) {
     authenticate {
         post("/api/like/likes") {
@@ -25,28 +23,23 @@ fun Route.likePost(
                 return@post
             }
 
-            ifEmailBelongsToUser(
-                userId = request.userId,
-                onValidateEmail = userService::doesEmailBelongToUserId
-            ) {
-                val likeSuccessful = likeService.likePost(request.userId, request.parentId)
-                if (likeSuccessful) {
-                    call.respond(
-                        HttpStatusCode.OK,
-                        BaseResponse(
-                            successful = true,
-                            message = ApiResponseMessage.LIKE_POST_SUCCESSFUL
-                        )
+            val likeSuccessful = likeService.likePost(call.userId, request.parentId)
+            if (likeSuccessful) {
+                call.respond(
+                    HttpStatusCode.OK,
+                    BaseResponse(
+                        successful = true,
+                        message = ApiResponseMessage.LIKE_POST_SUCCESSFUL
                     )
-                }else{
-                    call.respond(
-                        HttpStatusCode.OK,
-                        BaseResponse(
-                            successful = false,
-                            message = ApiResponseMessage.USER_NOT_FOUND
-                        )
+                )
+            }else{
+                call.respond(
+                    HttpStatusCode.OK,
+                    BaseResponse(
+                        successful = false,
+                        message = ApiResponseMessage.USER_NOT_FOUND
                     )
-                }
+                )
             }
         }
     }
@@ -55,7 +48,6 @@ fun Route.likePost(
 
 fun Route.unlikePost(
     likeService: LikeService,
-    userService: UserService,
 ) {
     authenticate {
         delete("/api/like/unlike") {
@@ -64,28 +56,23 @@ fun Route.unlikePost(
                 return@delete
             }
 
-            ifEmailBelongsToUser(
-                userId = request.userId,
-                onValidateEmail = userService::doesEmailBelongToUserId
-            ) {
-                val unlikeSuccessful = likeService.unlikePost(request.userId, request.parentId)
-                if (unlikeSuccessful) {
-                    call.respond(
-                        HttpStatusCode.OK,
-                        BaseResponse(
-                            successful = true,
-                            message = ApiResponseMessage.LIKE_POST_SUCCESSFUL
-                        )
+            val unlikeSuccessful = likeService.unlikePost(call.userId, request.parentId)
+            if (unlikeSuccessful) {
+                call.respond(
+                    HttpStatusCode.OK,
+                    BaseResponse(
+                        successful = true,
+                        message = ApiResponseMessage.LIKE_POST_SUCCESSFUL
                     )
-                }else{
-                    call.respond(
-                        HttpStatusCode.OK,
-                        BaseResponse(
-                            successful = false,
-                            message = ApiResponseMessage.USER_NOT_FOUND
-                        )
+                )
+            }else{
+                call.respond(
+                    HttpStatusCode.OK,
+                    BaseResponse(
+                        successful = false,
+                        message = ApiResponseMessage.USER_NOT_FOUND
                     )
-                }
+                )
             }
         }
     }

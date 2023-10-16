@@ -9,9 +9,9 @@ class CommentService(
     private val repository: CommentRepository
 ) {
 
-    suspend fun addComment(request: AddCommentRequest): ValidationEvent {
+    suspend fun addComment(request: AddCommentRequest,userId: String): ValidationEvent {
         request.apply {
-            if (userId.isBlank() || postId.isBlank() || comment.isBlank()) {
+            if (postId.isBlank() || comment.isBlank()) {
                 return ValidationEvent.FieldEmpty
             }
             if (comment.length > Constants.MAX_COMMENT_LENGTH) {
@@ -20,7 +20,7 @@ class CommentService(
         }
         repository.addComment(
             Comment(
-                userId = request.userId,
+                userId = userId,
                 postId = request.postId,
                 comment = request.comment,
                 timestamp = System.currentTimeMillis()
@@ -37,7 +37,7 @@ class CommentService(
         return repository.getCommentByPost(postId)
     }
 
-    suspend fun getComment(commentId: String): Comment? {
+    suspend fun getCommentById(commentId: String): Comment? {
         return repository.getComment(commentId)
     }
 

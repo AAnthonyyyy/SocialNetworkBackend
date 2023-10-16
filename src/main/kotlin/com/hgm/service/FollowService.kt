@@ -1,23 +1,22 @@
 package com.hgm.service
 
 import com.hgm.data.repository.follow.FollowRepository
-import com.hgm.data.requests.FollowRequest
 
 class FollowService(
     private val repository: FollowRepository
 ) {
 
-    suspend fun followUserIfExist(request:FollowRequest):Boolean{
+    suspend fun followUserIfExist(followingUserId:String,followedUserId:String):Boolean{
         return repository.followUserIfExist(
-            request.followingUserId,
-            request.followedUserId
+            followingUserId,
+            followedUserId
         )
     }
 
-    suspend fun unfollowUserIfExist(request:FollowRequest):Boolean{
+    suspend fun unfollowUserIfExist(followingUserId:String,followedUserId:String):Boolean{
         return repository.unFollowUserIfExist(
-            request.followingUserId,
-            request.followedUserId
+            followingUserId,
+            followedUserId
         )
     }
 }

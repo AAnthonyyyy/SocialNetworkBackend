@@ -3,6 +3,7 @@ package com.hgm.plugins
 import com.auth0.jwt.JWT
 import com.auth0.jwt.JWTVerifier
 import com.auth0.jwt.algorithms.Algorithm
+import com.hgm.utils.Constants
 import io.ktor.application.*
 import io.ktor.auth.*
 import io.ktor.auth.jwt.*
@@ -35,6 +36,4 @@ fun Application.configureSecurity() {
     }
 }
 
-// 快速获取邮箱，以便全局路由都可以用到
-val JWTPrincipal.email: String?
-    get() = getClaim("email", String::class)
+

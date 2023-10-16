@@ -13,6 +13,14 @@ class UserService(
         return repository.getUserByEmail(email) != null
     }
 
+    suspend fun getUserByEmail(email: String): User? {
+        return repository.getUserByEmail(email)
+    }
+
+    fun isValidPassword(enterPassword: String, actualPassword: String): Boolean {
+        return enterPassword == actualPassword
+    }
+
     suspend fun validateCreateRequest(request: CreateAccountRequest): ValidationEvent {
         return if (request.email.isBlank() || request.username.isBlank() || request.password.isBlank()) {
             ValidationEvent.FieldEmpty

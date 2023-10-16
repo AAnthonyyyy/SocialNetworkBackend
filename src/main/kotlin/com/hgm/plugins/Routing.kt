@@ -27,17 +27,17 @@ fun Application.configureRouting() {
         unfollowUser(followService)
 
         //帖子路由
-        createPost(postService, userService)
-        getPostsFromFollows(postService, userService)
-        deletePost(postService, userService,likeService)
+        createPost(postService)
+        getPostsFromFollows(postService)
+        deletePost(postService,likeService)
 
         //点赞路由
-        likePost(likeService, userService)
-        unlikePost(likeService, userService)
+        likePost(likeService)
+        unlikePost(likeService)
 
         //评论路由
-        addComment(commentService, userService)
-        deleteComment(commentService, userService, likeService)
+        addComment(commentService)
+        deleteComment(commentService, likeService)
         getCommentByPost(commentService)
     }
 }

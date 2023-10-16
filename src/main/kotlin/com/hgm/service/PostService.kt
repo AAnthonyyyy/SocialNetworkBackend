@@ -9,7 +9,7 @@ class PostService(
     private val repository: PostRepository
 ) {
 
-    suspend fun createPost(request:CreatePostRequest):Boolean{
+    suspend fun createPost(request: CreatePostRequest): Boolean {
         return repository.createPost(
             Post(
                 userId = request.userId,
@@ -25,7 +25,16 @@ class PostService(
         userId: String,
         page: Int = Constants.DEFAULT_POST_PAGE,
         pageSize: Int = Constants.DEFAULT_POST_PAGE_SIZE
-    ):List<Post>{
+    ): List<Post> {
         return repository.getPostsFromFollows(userId, page, pageSize)
+    }
+
+
+    suspend fun getPost(postId: String): Post?{
+        return repository.getPost(postId)
+    }
+
+    suspend fun deletePost(postId: String){
+        repository.deletePost(postId)
     }
 }

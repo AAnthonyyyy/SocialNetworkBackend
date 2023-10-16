@@ -2,11 +2,14 @@ package com.hgm.di
 
 import com.hgm.data.repository.follow.FollowRepository
 import com.hgm.data.repository.follow.FollowRepositoryImpl
+import com.hgm.data.repository.like.LikeRepository
+import com.hgm.data.repository.like.LikeRepositoryImpl
 import com.hgm.data.repository.post.PostRepository
 import com.hgm.data.repository.post.PostRepositoryImpl
 import com.hgm.data.repository.user.UserRepository
 import com.hgm.data.repository.user.UserRepositoryImpl
 import com.hgm.service.FollowService
+import com.hgm.service.LikeService
 import com.hgm.service.PostService
 import com.hgm.service.UserService
 import com.hgm.utils.Constants.DATABASE_NAME
@@ -33,10 +36,14 @@ val mainModule = module {
     single<PostRepository> {
         PostRepositoryImpl(get())
     }
+    single<LikeRepository> {
+        LikeRepositoryImpl(get())
+    }
 
 
     // Service
     single { UserService(get()) }
     single { FollowService(get()) }
     single { PostService(get()) }
+    single { LikeService(get()) }
 }

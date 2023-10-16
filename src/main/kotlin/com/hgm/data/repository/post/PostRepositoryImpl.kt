@@ -17,8 +17,9 @@ class PostRepositoryImpl(
 
     override suspend fun createPost(post: Post): Boolean {
         //检查用户是否存在
+        // TODO("这里我认为没必要查询用户是否存在")
         val doesUserExist = users.findOneById(post.userId) != null
-        if (!doesUserExist){
+        if (!doesUserExist) {
             return false
         }
         posts.insertOne(post)
@@ -50,5 +51,9 @@ class PostRepositoryImpl(
             .limit(pageSize)
             .descendingSort(Post::timestamp)
             .toList()
+    }
+
+    override suspend fun getPost(postId: String): Post? {
+        return posts.findOneById(postId)
     }
 }

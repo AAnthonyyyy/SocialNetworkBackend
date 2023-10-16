@@ -10,10 +10,12 @@ import com.hgm.service.UserService
 import com.hgm.service.UserService.ValidationEvent.Success
 import com.hgm.service.UserService.ValidationEvent.FieldEmpty
 import com.hgm.service.UserService.ValidationEvent.UserExist
-import com.hgm.utils.ApiMessage.EMAIL_ALREADY_EXIST
-import com.hgm.utils.ApiMessage.FIELDS_BLANK
-import com.hgm.utils.ApiMessage.LOGIN_FAILED
-import com.hgm.utils.ApiMessage.REGISTER_SUCCESSFUL
+import com.hgm.utils.ApiResponseMessage
+import com.hgm.utils.ApiResponseMessage.EMAIL_ALREADY_EXIST
+import com.hgm.utils.ApiResponseMessage.FIELDS_BLANK
+import com.hgm.utils.ApiResponseMessage.LOGIN_FAILED
+import com.hgm.utils.ApiResponseMessage.REGISTER_SUCCESSFUL
+import com.hgm.utils.Constants
 import io.ktor.application.*
 import io.ktor.http.*
 import io.ktor.request.*
@@ -91,17 +93,21 @@ fun Route.loginUser(
         val doesPasswordMatch = userService.doesPasswordMatchForUser(request)
         if (doesPasswordMatch) {
             // 生成Token
-            val expiresIn = 1000L * 60L * 60L * 24L * 365L
+            val expiresIn = 1000L * 60L * 60L * 24L * 365L //过期时间为一年
             val token = JWT.create()
                 .withAudience(jwtAudience)
                 .withIssuer(jwtIssuer)
                 .withExpiresAt(Date(System.currentTimeMillis() + expiresIn))
-                .withClaim("email", request.email)
+                .withClaim(Constants.KEY_CLAIM_EMAIL, request.email)
                 .sign(Algorithm.HMAC256(jwtSecret))
 
             call.respond(
                 HttpStatusCode.OK,
-                AuthResponse(token = token)
+                AuthResponse(
+                    successful = true,
+                    message = ApiResponseMessage.LOGIN_SUCCESSFUL,
+                    token = token
+                )
             )
         } else {
             call.respond(

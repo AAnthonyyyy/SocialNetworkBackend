@@ -5,4 +5,6 @@ object Constants {
 
     const val DEFAULT_POST_PAGE = 0
     const val DEFAULT_POST_PAGE_SIZE = 10
+
+    const val KEY_CLAIM_EMAIL = "email"
 }

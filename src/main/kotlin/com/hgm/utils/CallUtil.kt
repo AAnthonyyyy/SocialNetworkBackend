@@ -1,5 +1,6 @@
 package com.hgm.utils
 
+import com.hgm.data.responses.BaseResponse
 import com.hgm.plugins.email
 import io.ktor.application.*
 import io.ktor.auth.*
@@ -20,17 +21,20 @@ suspend fun PipelineContext<Unit, ApplicationCall>.ifEmailBelongsToUser(
     onSuccess: suspend () -> Unit
 ) {
     // 获取匹配结果
-    val result = onValidateEmail(
+    val matchResult = onValidateEmail(
         call.principal<JWTPrincipal>()?.email ?: "",
         userId
     )
 
-    if (result) {
+    if (matchResult) {
         onSuccess()
     } else {
         call.respond(
             HttpStatusCode.Unauthorized,
-            "您的身份存在疑问，无法进行发帖操作"
+            BaseResponse(
+                successful = false,
+                message = ApiResponseMessage.CREATE_POST_AUTH_ERROR
+            )
         )
     }
 }

@@ -2,6 +2,7 @@ package com.hgm.plugins
 
 import com.hgm.routes.*
 import com.hgm.service.FollowService
+import com.hgm.service.LikeService
 import com.hgm.service.PostService
 import com.hgm.service.UserService
 import io.ktor.application.*
@@ -12,6 +13,7 @@ fun Application.configureRouting() {
     val userService: UserService by inject()
     val followService: FollowService by inject()
     val postService: PostService by inject()
+    val likeService: LikeService by inject()
 
     val jwtAudience = environment.config.property("jwt.audience").getString()
     val jwtIssuer = environment.config.property("jwt.domain").getString()
@@ -20,12 +22,7 @@ fun Application.configureRouting() {
     routing {
         //用户路由
         registerUser(userService)
-        loginUser(
-            userService = userService,
-            jwtAudience = jwtAudience,
-            jwtIssuer = jwtIssuer,
-            jwtSecret = jwtSecret
-        )
+        loginUser(userService, jwtAudience, jwtIssuer, jwtSecret)
 
         //关注路由
         followUser(followService)
@@ -33,6 +30,12 @@ fun Application.configureRouting() {
 
         //帖子路由
         createPost(postService, userService)
-        getPostsFromFollows(postService,userService)
+        getPostsFromFollows(postService, userService)
+        deletePost(postService, userService,likeService)
+
+        //点赞路由
+        likePost(likeService, userService)
+        unlikePost(likeService, userService)
+
     }
 }

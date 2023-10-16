@@ -3,9 +3,9 @@ package com.hgm.routes
 import com.hgm.data.requests.FollowRequest
 import com.hgm.data.responses.BaseResponse
 import com.hgm.service.FollowService
-import com.hgm.utils.ApiMessage.FOLLOWING_SUCCESSFUL
-import com.hgm.utils.ApiMessage.UNFOLLOWING_SUCCESSFUL
-import com.hgm.utils.ApiMessage.USER_NOT_FOUND
+import com.hgm.utils.ApiResponseMessage.FOLLOWING_SUCCESSFUL
+import com.hgm.utils.ApiResponseMessage.UNFOLLOWING_SUCCESSFUL
+import com.hgm.utils.ApiResponseMessage.USER_NOT_FOUND
 import io.ktor.application.*
 import io.ktor.http.*
 import io.ktor.request.*

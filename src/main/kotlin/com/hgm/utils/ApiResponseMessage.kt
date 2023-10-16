@@ -6,7 +6,7 @@ package com.hgm.utils
  */
 object ApiResponseMessage {
     //注册
-    const val FIELDS_BLANK = "您的注册信息存在空白呢"
+    const val FIELDS_BLANK = "您的内容存在空白呢"
     const val REGISTER_SUCCESSFUL = "恭喜您 注册成功啦"
     const val EMAIL_ALREADY_EXIST = "哎呀 邮箱被某个家伙使用了"
 
@@ -24,5 +24,10 @@ object ApiResponseMessage {
     const val DELETE_POST_SUCCESSFUL = "帖子删除成功"
     const val CREATE_POST_AUTH_ERROR = "您的身份存在疑问无法进行发帖操作"
     const val LIKE_POST_SUCCESSFUL = "您点赞了这篇帖子"
+
+    //评论
+    const val COMMENT_LENGTH_TOO_LONG="内容字数不能超过 ${Constants.MAX_COMMENT_LENGTH} 哟"
+    const val ADD_COMMENT_SUCCESSFUL="发表评论成功"
+    const val DELETE_COMMENT_SUCCESSFUL="删除评论成功"
 
 }

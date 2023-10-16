@@ -7,9 +7,6 @@ import com.hgm.data.requests.LoginRequest
 import com.hgm.data.responses.AuthResponse
 import com.hgm.data.responses.BaseResponse
 import com.hgm.service.UserService
-import com.hgm.service.UserService.ValidationEvent.Success
-import com.hgm.service.UserService.ValidationEvent.FieldEmpty
-import com.hgm.service.UserService.ValidationEvent.UserExist
 import com.hgm.utils.ApiResponseMessage
 import com.hgm.utils.ApiResponseMessage.EMAIL_ALREADY_EXIST
 import com.hgm.utils.ApiResponseMessage.FIELDS_BLANK
@@ -36,7 +33,7 @@ fun Route.registerUser(
 
         // 验证创建请求
         when (userService.validateCreateRequest(request)) {
-            is UserExist -> {
+            is UserService.ValidationEvent.UserExist -> {
                 call.respond(
                     HttpStatusCode.BadRequest,
                     BaseResponse(
@@ -47,7 +44,7 @@ fun Route.registerUser(
                 return@post
             }
 
-            is FieldEmpty -> {
+            is UserService.ValidationEvent.FieldEmpty -> {
                 call.respond(
                     HttpStatusCode.BadRequest,
                     BaseResponse(
@@ -58,7 +55,7 @@ fun Route.registerUser(
                 return@post
             }
 
-            is Success -> {
+            is UserService.ValidationEvent.Success -> {
                 userService.createAccount(request)
                 call.respond(
                     BaseResponse(

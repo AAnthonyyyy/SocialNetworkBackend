@@ -19,7 +19,7 @@ fun Route.likePost(
     userService: UserService
 ) {
     authenticate {
-        post("/api/like/like_post") {
+        post("/api/like/likes") {
             val request = call.receiveOrNull<LikeRequest>() ?: kotlin.run {
                 call.respond(HttpStatusCode.BadRequest)
                 return@post
@@ -58,7 +58,7 @@ fun Route.unlikePost(
     userService: UserService,
 ) {
     authenticate {
-        delete("/api/like/unlike_post") {
+        delete("/api/like/unlike") {
             val request = call.receiveOrNull<LikeRequest>() ?: kotlin.run {
                 call.respond(HttpStatusCode.BadRequest)
                 return@delete

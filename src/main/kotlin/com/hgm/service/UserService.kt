@@ -3,7 +3,6 @@ package com.hgm.service
 import com.hgm.data.models.User
 import com.hgm.data.repository.user.UserRepository
 import com.hgm.data.requests.CreateAccountRequest
-import com.hgm.data.requests.CreatePostRequest
 import com.hgm.data.requests.LoginRequest
 
 class UserService(

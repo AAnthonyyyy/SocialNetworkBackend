@@ -3,6 +3,7 @@ package com.hgm.routes
 import com.hgm.data.requests.CreatePostRequest
 import com.hgm.data.requests.DeletePostRequest
 import com.hgm.data.responses.BaseResponse
+import com.hgm.service.CommentService
 import com.hgm.service.LikeService
 import com.hgm.service.PostService
 import com.hgm.service.UserService
@@ -62,7 +63,7 @@ fun Route.getPostsFromFollows(
     userService: UserService
 ) {
     authenticate {
-        get("/api/post/posts") {
+        get("/api/post/get") {
             val userId = call.parameters[QueryParams.PARAM_USER_ID] ?: kotlin.run {
                 call.respond(HttpStatusCode.BadRequest)
                 return@get
@@ -77,6 +78,10 @@ fun Route.getPostsFromFollows(
                 onValidateEmail = userService::doesEmailBelongToUserId
             ) {
                 val posts = postService.getPostsFromFollows(userId, page, pageSize)
+                call.respond(
+                    HttpStatusCode.OK,
+                    posts
+                )
             }
         }
     }
@@ -86,7 +91,7 @@ fun Route.getPostsFromFollows(
 fun Route.deletePost(
     postService: PostService,
     userService: UserService,
-    likeService: LikeService
+    likeService: LikeService,
 ) {
     delete("/api/post/delete") {
         val request = call.receiveOrNull<DeletePostRequest>() ?: kotlin.run {

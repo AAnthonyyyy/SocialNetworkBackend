@@ -1,5 +1,7 @@
 package com.hgm.di
 
+import com.hgm.data.repository.comment.CommentRepository
+import com.hgm.data.repository.comment.CommentRepositoryImpl
 import com.hgm.data.repository.follow.FollowRepository
 import com.hgm.data.repository.follow.FollowRepositoryImpl
 import com.hgm.data.repository.like.LikeRepository
@@ -8,10 +10,7 @@ import com.hgm.data.repository.post.PostRepository
 import com.hgm.data.repository.post.PostRepositoryImpl
 import com.hgm.data.repository.user.UserRepository
 import com.hgm.data.repository.user.UserRepositoryImpl
-import com.hgm.service.FollowService
-import com.hgm.service.LikeService
-import com.hgm.service.PostService
-import com.hgm.service.UserService
+import com.hgm.service.*
 import com.hgm.utils.Constants.DATABASE_NAME
 import org.koin.dsl.module
 import org.litote.kmongo.coroutine.coroutine
@@ -39,6 +38,9 @@ val mainModule = module {
     single<LikeRepository> {
         LikeRepositoryImpl(get())
     }
+    single<CommentRepository> {
+        CommentRepositoryImpl(get())
+    }
 
 
     // Service
@@ -46,4 +48,5 @@ val mainModule = module {
     single { FollowService(get()) }
     single { PostService(get()) }
     single { LikeService(get()) }
+    single { CommentService(get()) }
 }

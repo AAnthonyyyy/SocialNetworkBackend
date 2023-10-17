@@ -21,12 +21,20 @@ class PostService(
     }
 
 
-    suspend fun getPostsFromFollows(
+    suspend fun getPostsForFollows(
         userId: String,
         page: Int = Constants.DEFAULT_POST_PAGE,
         pageSize: Int = Constants.DEFAULT_POST_PAGE_SIZE
     ): List<Post> {
-        return repository.getPostsFromFollows(userId, page, pageSize)
+        return repository.getPostsByFollows(userId, page, pageSize)
+    }
+
+    suspend fun getPostsForProfile(
+        userId: String,
+        page: Int = Constants.DEFAULT_POST_PAGE,
+        pageSize: Int = Constants.DEFAULT_POST_PAGE_SIZE
+    ): List<Post> {
+        return repository.getPostsForProfile(userId, page, pageSize)
     }
 
 

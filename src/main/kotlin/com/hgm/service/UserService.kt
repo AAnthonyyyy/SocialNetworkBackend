@@ -4,6 +4,8 @@ import com.hgm.data.models.User
 import com.hgm.data.repository.follow.FollowRepository
 import com.hgm.data.repository.user.UserRepository
 import com.hgm.data.requests.CreateAccountRequest
+import com.hgm.data.requests.UpdateProfileRequest
+import com.hgm.data.responses.ProfileResponse
 import com.hgm.data.responses.UserResponseItem
 
 class UserService(
@@ -13,6 +15,27 @@ class UserService(
 
     private suspend fun doesUserExist(email: String): Boolean {
         return userRepository.getUserByEmail(email) != null
+    }
+
+    suspend fun getUserProfile(userId: String, callUserId: String): ProfileResponse? {
+        //查询该用户的信息
+        val user = userRepository.getUserById(userId) ?: return null
+        return ProfileResponse(
+            username = user.username,
+            profilePictureUrl = user.profileImageUrl,
+            bio = user.bio,
+            followingCount = user.followingCount,
+            followedCount = user.followedCount,
+            postCount = user.postCount,
+            topSkillUrls = user.skills,
+            githubUrl = user.githubUrl,
+            instagramUrl = user.instagramUrl,
+            linkedInUrl = user.linkedInUrl,
+            isOwnProfile = userId == callUserId,
+            isFollowing = if (userId != callUserId) {
+                followRepository.checkUserFollowing(callUserId, userId)
+            } else false
+        )
     }
 
     suspend fun getUserByEmail(email: String): User? {
@@ -46,6 +69,14 @@ class UserService(
                 linkedInUrl = ""
             )
         )
+    }
+
+    suspend fun updateUser(
+        userId: String,
+        profilePictureUrl: String,
+        request: UpdateProfileRequest
+    ): Boolean {
+        return userRepository.updateUser(userId, profilePictureUrl, request)
     }
 
 

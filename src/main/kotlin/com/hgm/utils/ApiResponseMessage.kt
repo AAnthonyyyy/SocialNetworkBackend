@@ -30,4 +30,7 @@ object ApiResponseMessage {
     const val ADD_COMMENT_SUCCESSFUL="发表评论成功"
     const val DELETE_COMMENT_SUCCESSFUL="删除评论成功"
 
+    //个人资料
+    const val PROFILE_UPDATE_SUCCESSFUL="个人信息更新成功"
+
 }

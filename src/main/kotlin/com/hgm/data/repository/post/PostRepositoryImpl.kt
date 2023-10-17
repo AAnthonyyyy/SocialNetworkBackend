@@ -30,7 +30,7 @@ class PostRepositoryImpl(
         posts.deleteOneById(postId)
     }
 
-    override suspend fun getPostsFromFollows(
+    override suspend fun getPostsByFollows(
         userId: String,
         page: Int,
         pageSize: Int
@@ -47,6 +47,15 @@ class PostRepositoryImpl(
 
         //通过查询属于这个ID的所有帖子，并按时间降序显示
         return posts.find(Post::userId `in` userIdFromFollows)
+            .skip(page * pageSize)
+            .limit(pageSize)
+            .descendingSort(Post::timestamp)
+            .toList()
+    }
+
+    override suspend fun getPostsForProfile(userId: String, page: Int, pageSize: Int): List<Post> {
+        //查询个人的所有帖子，降序显示
+        return posts.find(Post::userId eq userId)
             .skip(page * pageSize)
             .limit(pageSize)
             .descendingSort(Post::timestamp)

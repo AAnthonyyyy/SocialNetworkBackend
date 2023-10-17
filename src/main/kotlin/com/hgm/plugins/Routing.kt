@@ -3,6 +3,7 @@ package com.hgm.plugins
 import com.hgm.routes.*
 import com.hgm.service.*
 import io.ktor.application.*
+import io.ktor.http.content.*
 import io.ktor.routing.*
 import org.koin.ktor.ext.inject
 
@@ -23,6 +24,9 @@ fun Application.configureRouting() {
         registerUser(userService)
         loginUser(userService, jwtAudience, jwtIssuer, jwtSecret)
         searchUser(userService)
+        getUserProfile(userService)
+        getPostsForProfile(postService)
+        updateUserProfile(userService)
 
         //关注路由
         followUser(followService,activityService)
@@ -44,5 +48,11 @@ fun Application.configureRouting() {
 
         //活动路由
         getActivities(activityService)
+
+
+        //静态路由用于显示资源图片
+        static {
+            resources("static")
+        }
     }
 }

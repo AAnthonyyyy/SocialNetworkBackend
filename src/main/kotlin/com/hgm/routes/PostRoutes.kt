@@ -58,7 +58,7 @@ fun Route.getPostsForFollows(
                 call.parameters[QueryParams.PARAM_PAGE_SIZE]?.toIntOrNull() ?: Constants.DEFAULT_POST_PAGE_SIZE
 
 
-            val posts = postService.getPostsFromFollows(call.userId, page, pageSize)
+            val posts = postService.getPostsForFollows(call.userId, page, pageSize)
             call.respond(
                 HttpStatusCode.OK,
                 posts

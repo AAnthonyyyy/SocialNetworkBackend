@@ -2,11 +2,14 @@ package com.hgm.routes
 
 import com.auth0.jwt.JWT
 import com.auth0.jwt.algorithms.Algorithm
+import com.google.gson.Gson
 import com.hgm.data.models.User
 import com.hgm.data.requests.CreateAccountRequest
 import com.hgm.data.requests.LoginRequest
+import com.hgm.data.requests.UpdateProfileRequest
 import com.hgm.data.responses.AuthResponse
 import com.hgm.data.responses.BaseResponse
+import com.hgm.service.PostService
 import com.hgm.service.UserService
 import com.hgm.utils.ApiResponseMessage
 import com.hgm.utils.ApiResponseMessage.EMAIL_ALREADY_EXIST
@@ -14,14 +17,19 @@ import com.hgm.utils.ApiResponseMessage.FIELDS_BLANK
 import com.hgm.utils.ApiResponseMessage.LOGIN_FAILED
 import com.hgm.utils.ApiResponseMessage.REGISTER_SUCCESSFUL
 import com.hgm.utils.Constants
+import com.hgm.utils.Constants.BASE_URL
+import com.hgm.utils.Constants.PROFILE_PICTURE_PATH
 import com.hgm.utils.QueryParams
 import com.hgm.utils.userId
 import io.ktor.application.*
 import io.ktor.auth.*
 import io.ktor.http.*
+import io.ktor.http.content.*
 import io.ktor.request.*
 import io.ktor.response.*
 import io.ktor.routing.*
+import org.koin.ktor.ext.inject
+import java.io.File
 import java.util.*
 
 /** 注册 */
@@ -157,6 +165,125 @@ fun Route.searchUser(
             call.respond(
                 HttpStatusCode.OK,
                 searchResult
+            )
+        }
+    }
+}
+
+
+/** 获取个人信息 */
+fun Route.getUserProfile(
+    userService: UserService
+) {
+    authenticate {
+        get("/api/user/profile") {
+            val userId = call.parameters[QueryParams.PARAM_USER_ID]
+            if (userId.isNullOrBlank()) {
+                call.respond(HttpStatusCode.BadRequest)
+                return@get
+            }
+
+            val profile = userService.getUserProfile(userId, call.userId) ?: kotlin.run {
+                call.respond(
+                    HttpStatusCode.OK,
+                    BaseResponse(
+                        successful = false,
+                        message = ApiResponseMessage.USER_NOT_FOUND
+                    )
+                )
+                return@get
+            }
+            call.respond(
+                HttpStatusCode.OK,
+                profile
+            )
+        }
+    }
+}
+
+
+/** 更新个人信息 */
+fun Route.updateUserProfile(
+    userService: UserService
+) {
+    val gson: Gson by inject()
+    authenticate {
+        put("/api/user/update") {
+            val multipart = call.receiveMultipart()
+            var updateProfileRequest: UpdateProfileRequest? = null
+            var fileName: String? = null
+
+            //多部分上传，按照类型分开处理（表单 or 图片）
+            multipart.forEachPart { postData ->
+                when (postData) {
+                    is PartData.FormItem -> {
+                        if (postData.name == "update_profile_data") {
+                            updateProfileRequest = gson.fromJson(postData.value, UpdateProfileRequest::class.java)
+                        }
+                    }
+
+                    is PartData.FileItem -> {
+                        val fileBytes = postData.streamProvider().readBytes()
+                        val fileExtension = postData.originalFileName?.takeLastWhile { it != '.' }
+                        fileName = UUID.randomUUID().toString() + "." + fileExtension
+                        File("$PROFILE_PICTURE_PATH$fileName").writeBytes(fileBytes)
+                    }
+
+                    is PartData.BinaryItem -> Unit
+                }
+            }
+
+            //图片路径
+            val profilePictureUrl = "${BASE_URL}profile_pictures/$fileName"
+
+            updateProfileRequest?.let { request ->
+                val updateAcknowledge = userService.updateUser(
+                    userId = call.userId,
+                    profilePictureUrl = profilePictureUrl,
+                    request = request
+                )
+                if (updateAcknowledge) {
+                    call.respond(
+                        HttpStatusCode.OK,
+                        BaseResponse(
+                            successful = true,
+                            message = ApiResponseMessage.PROFILE_UPDATE_SUCCESSFUL
+                        )
+                    )
+                } else {
+                    //更新失败的话需要把上传的照片资源删除掉
+                    File("src/main/${PROFILE_PICTURE_PATH}/$fileName").delete()
+                    call.respond(HttpStatusCode.InternalServerError)
+                }
+            } ?: kotlin.run {
+                call.respond(HttpStatusCode.BadRequest)
+                return@put
+            }
+        }
+    }
+}
+
+
+/** 获取个人发布的帖子 */
+fun Route.getPostsForProfile(
+    postService: PostService,
+) {
+    authenticate {
+        get("/api/user/post") {
+            val page =
+                call.parameters[QueryParams.PARAM_PAGE]?.toIntOrNull() ?: Constants.DEFAULT_POST_PAGE
+            val pageSize =
+                call.parameters[QueryParams.PARAM_PAGE_SIZE]?.toIntOrNull() ?: Constants.DEFAULT_POST_PAGE_SIZE
+
+
+            val posts = postService.getPostsForProfile(
+                userId = call.userId,
+                page = page,
+                pageSize = pageSize
+            )
+            call.respond(
+                HttpStatusCode.OK,
+                posts
             )
         }
     }

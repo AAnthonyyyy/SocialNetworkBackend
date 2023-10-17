@@ -1,5 +1,7 @@
 package com.hgm.di
 
+import com.hgm.data.repository.activity.ActivityRepository
+import com.hgm.data.repository.activity.ActivityRepositoryImpl
 import com.hgm.data.repository.comment.CommentRepository
 import com.hgm.data.repository.comment.CommentRepositoryImpl
 import com.hgm.data.repository.follow.FollowRepository
@@ -41,6 +43,9 @@ val mainModule = module {
     single<CommentRepository> {
         CommentRepositoryImpl(get())
     }
+    single<ActivityRepository> {
+        ActivityRepositoryImpl(get())
+    }
 
 
     // Service
@@ -49,4 +54,5 @@ val mainModule = module {
     single { PostService(get()) }
     single { LikeService(get()) }
     single { CommentService(get()) }
+    single { ActivityService(get(),get(),get()) }
 }

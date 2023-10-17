@@ -1,7 +1,10 @@
 package com.hgm.routes
 
+import com.hgm.data.models.Activity
 import com.hgm.data.requests.FollowRequest
 import com.hgm.data.responses.BaseResponse
+import com.hgm.data.utils.ActivityType
+import com.hgm.service.ActivityService
 import com.hgm.service.FollowService
 import com.hgm.utils.ApiResponseMessage.FOLLOWING_SUCCESSFUL
 import com.hgm.utils.ApiResponseMessage.UNFOLLOWING_SUCCESSFUL
@@ -16,7 +19,8 @@ import io.ktor.routing.*
 
 
 fun Route.followUser(
-    followService: FollowService
+    followService: FollowService,
+    activityService: ActivityService
 ) {
     authenticate {
         post("/api/following/follow") {
@@ -27,6 +31,15 @@ fun Route.followUser(
 
             val doesUserExist = followService.followUserIfExist(call.userId, request.followedUserId)
             if (doesUserExist) {
+                activityService.createLikeActivity(
+                    Activity(
+                        byUserId = call.userId,
+                        toUserId = request.followedUserId,
+                        type = ActivityType.FollowedYou.type,
+                        timestamp = System.currentTimeMillis(),
+                        parentId = ""
+                    )
+                )
                 call.respond(
                     HttpStatusCode.OK,
                     BaseResponse(

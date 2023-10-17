@@ -12,6 +12,7 @@ fun Application.configureRouting() {
     val postService: PostService by inject()
     val likeService: LikeService by inject()
     val commentService: CommentService by inject()
+    val activityService: ActivityService by inject()
 
     val jwtAudience = environment.config.property("jwt.audience").getString()
     val jwtIssuer = environment.config.property("jwt.domain").getString()
@@ -23,21 +24,24 @@ fun Application.configureRouting() {
         loginUser(userService, jwtAudience, jwtIssuer, jwtSecret)
 
         //关注路由
-        followUser(followService)
+        followUser(followService,activityService)
         unfollowUser(followService)
 
         //帖子路由
         createPost(postService)
-        getPostsFromFollows(postService)
-        deletePost(postService,likeService)
+        getPostsForFollows(postService)
+        deletePost(postService, likeService, commentService)
 
         //点赞路由
-        likePost(likeService)
+        likePost(likeService, activityService)
         unlikePost(likeService)
 
         //评论路由
-        addComment(commentService)
+        addComment(commentService, activityService)
         deleteComment(commentService, likeService)
         getCommentByPost(commentService)
+
+        //活动路由
+        getActivities(activityService)
     }
 }

@@ -6,11 +6,9 @@ import com.hgm.data.responses.BaseResponse
 import com.hgm.service.CommentService
 import com.hgm.service.LikeService
 import com.hgm.service.PostService
-import com.hgm.service.UserService
 import com.hgm.utils.*
 import io.ktor.application.*
 import io.ktor.auth.*
-import io.ktor.auth.jwt.*
 import io.ktor.http.*
 import io.ktor.request.*
 import io.ktor.response.*
@@ -49,7 +47,7 @@ fun Route.createPost(
 }
 
 
-fun Route.getPostsFromFollows(
+fun Route.getPostsForFollows(
     postService: PostService,
 ) {
     authenticate {
@@ -73,6 +71,7 @@ fun Route.getPostsFromFollows(
 fun Route.deletePost(
     postService: PostService,
     likeService: LikeService,
+    commentService: CommentService
 ) {
     authenticate {
         delete("/api/post/delete") {
@@ -89,8 +88,8 @@ fun Route.deletePost(
             if (call.userId == post.userId) {
                 //删除帖子也要把关于帖子的点赞以及评论删除
                 postService.deletePost(request.postId)
-                likeService.removeLikeByParent(request.postId)
-                // TODO: 删除评论
+                likeService.removeLikeForParent(request.postId)
+                commentService.deleteCommentForPost(request.postId)
                 call.respond(
                     HttpStatusCode.OK,
                     BaseResponse(

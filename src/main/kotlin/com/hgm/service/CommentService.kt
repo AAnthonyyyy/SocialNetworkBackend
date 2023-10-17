@@ -9,7 +9,7 @@ class CommentService(
     private val repository: CommentRepository
 ) {
 
-    suspend fun addComment(request: AddCommentRequest,userId: String): ValidationEvent {
+    suspend fun addComment(request: AddCommentRequest, userId: String): ValidationEvent {
         request.apply {
             if (postId.isBlank() || comment.isBlank()) {
                 return ValidationEvent.FieldEmpty
@@ -34,11 +34,15 @@ class CommentService(
     }
 
     suspend fun getCommentByPost(postId: String): List<Comment> {
-        return repository.getCommentByPost(postId)
+        return repository.getCommentForPost(postId)
     }
 
     suspend fun getCommentById(commentId: String): Comment? {
         return repository.getComment(commentId)
+    }
+
+    suspend fun deleteCommentForPost(postId: String) {
+        repository.deleteCommentsForPost(postId)
     }
 
 

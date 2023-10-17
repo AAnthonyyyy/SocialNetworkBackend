@@ -2,8 +2,9 @@ package com.hgm.routes
 
 import com.hgm.data.requests.LikeRequest
 import com.hgm.data.responses.BaseResponse
+import com.hgm.data.utils.ParentType
+import com.hgm.service.ActivityService
 import com.hgm.service.LikeService
-import com.hgm.service.UserService
 import com.hgm.utils.ApiResponseMessage
 import com.hgm.utils.userId
 import io.ktor.application.*
@@ -15,6 +16,7 @@ import io.ktor.routing.*
 
 fun Route.likePost(
     likeService: LikeService,
+    activityService: ActivityService
 ) {
     authenticate {
         post("/api/like/likes") {
@@ -23,8 +25,14 @@ fun Route.likePost(
                 return@post
             }
 
-            val likeSuccessful = likeService.likePost(call.userId, request.parentId)
+            val likeSuccessful =
+                likeService.likePost(call.userId, request.parentId,request.parentType)
             if (likeSuccessful) {
+                activityService.createLikeActivity(
+                    byUserId = call.userId,
+                    parentType = ParentType.fromType(request.parentType),
+                    parentId = request.parentId
+                )
                 call.respond(
                     HttpStatusCode.OK,
                     BaseResponse(
@@ -32,7 +40,7 @@ fun Route.likePost(
                         message = ApiResponseMessage.LIKE_POST_SUCCESSFUL
                     )
                 )
-            }else{
+            } else {
                 call.respond(
                     HttpStatusCode.OK,
                     BaseResponse(
@@ -65,7 +73,7 @@ fun Route.unlikePost(
                         message = ApiResponseMessage.LIKE_POST_SUCCESSFUL
                     )
                 )
-            }else{
+            } else {
                 call.respond(
                     HttpStatusCode.OK,
                     BaseResponse(

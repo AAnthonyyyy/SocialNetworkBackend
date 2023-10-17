@@ -3,9 +3,9 @@ package com.hgm.routes
 import com.hgm.data.requests.AddCommentRequest
 import com.hgm.data.requests.DeleteCommentRequest
 import com.hgm.data.responses.BaseResponse
+import com.hgm.service.ActivityService
 import com.hgm.service.CommentService
 import com.hgm.service.LikeService
-import com.hgm.service.UserService
 import com.hgm.utils.ApiResponseMessage
 import com.hgm.utils.QueryParams
 import com.hgm.utils.userId
@@ -18,6 +18,7 @@ import io.ktor.routing.*
 
 fun Route.addComment(
     commentService: CommentService,
+    activityService: ActivityService
 ) {
     authenticate {
         post("/api/comment/add") {
@@ -27,7 +28,7 @@ fun Route.addComment(
             }
 
             when (commentService.addComment(request, call.userId)) {
-                CommentService.ValidationEvent.CommentTooLong -> {
+                is CommentService.ValidationEvent.CommentTooLong -> {
                     call.respond(
                         HttpStatusCode.OK,
                         BaseResponse(
@@ -36,8 +37,7 @@ fun Route.addComment(
                         )
                     )
                 }
-
-                CommentService.ValidationEvent.FieldEmpty -> {
+                is CommentService.ValidationEvent.FieldEmpty -> {
                     call.respond(
                         HttpStatusCode.OK,
                         BaseResponse(
@@ -46,8 +46,11 @@ fun Route.addComment(
                         )
                     )
                 }
-
-                CommentService.ValidationEvent.Success -> {
+                is CommentService.ValidationEvent.Success -> {
+                    activityService.createCommentActivity(
+                        byUserId = call.userId,
+                        postId = request.postId,
+                    )
                     call.respond(
                         HttpStatusCode.OK,
                         BaseResponse(
@@ -100,7 +103,7 @@ fun Route.deleteComment(
 
             val deleteSuccessful = commentService.deleteComment(request.commentId)
             if (deleteSuccessful) {
-                likeService.removeLikeByParent(request.commentId)
+                likeService.removeLikeForParent(request.commentId)
                 call.respond(
                     HttpStatusCode.OK,
                     BaseResponse(

@@ -22,6 +22,7 @@ fun Application.configureRouting() {
         //用户路由
         registerUser(userService)
         loginUser(userService, jwtAudience, jwtIssuer, jwtSecret)
+        searchUser(userService)
 
         //关注路由
         followUser(followService,activityService)

@@ -1,14 +1,23 @@
 package com.hgm.data.repository.follow
 
+import com.hgm.data.models.Following
+
 interface FollowRepository {
 
     suspend fun followUserIfExist(
         followingUserId: String,
         followedUserId: String
-    ):Boolean
+    ): Boolean
 
     suspend fun unFollowUserIfExist(
         followingUserId: String,
         followedUserId: String
-    ):Boolean
+    ): Boolean
+
+    suspend fun checkUserFollowing(
+        followingUserId: String,
+        followedUserId: String
+    ): Boolean
+
+    suspend fun getFollowsByUser(userId: String): List<Following>
 }

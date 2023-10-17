@@ -1,20 +1,22 @@
 package com.hgm.service
 
 import com.hgm.data.models.User
+import com.hgm.data.repository.follow.FollowRepository
 import com.hgm.data.repository.user.UserRepository
 import com.hgm.data.requests.CreateAccountRequest
-import com.hgm.data.requests.LoginRequest
+import com.hgm.data.responses.UserResponseItem
 
 class UserService(
-    private val repository: UserRepository
+    private val userRepository: UserRepository,
+    private val followRepository: FollowRepository
 ) {
 
     private suspend fun doesUserExist(email: String): Boolean {
-        return repository.getUserByEmail(email) != null
+        return userRepository.getUserByEmail(email) != null
     }
 
     suspend fun getUserByEmail(email: String): User? {
-        return repository.getUserByEmail(email)
+        return userRepository.getUserByEmail(email)
     }
 
     fun isValidPassword(enterPassword: String, actualPassword: String): Boolean {
@@ -32,7 +34,7 @@ class UserService(
     }
 
     suspend fun createAccount(request: CreateAccountRequest) {
-        repository.createUser(
+        userRepository.createUser(
             User(
                 email = request.email,
                 username = request.username,
@@ -46,17 +48,25 @@ class UserService(
         )
     }
 
-    suspend fun doesPasswordMatchForUser(request: LoginRequest): Boolean {
-        return repository.doesPasswordMatchForUser(
-            email = request.email,
-            enterPassword = request.password
-        )
-    }
 
-    suspend fun doesEmailBelongToUserId(email: String, userId: String): Boolean {
-        return repository.doesEmailBelongToUserId(email, userId)
-    }
+    suspend fun searchForUsers(query: String, userId: String): List<UserResponseItem> {
+        //获取当前用户的所有关注人信息
+        val followsByUser = followRepository.getFollowsByUser(userId)
 
+        return userRepository.searchForUser(query).map { user ->
+            //检查关注人列表是否包含我们查询的用户
+            val isFollowing = followsByUser.find {
+                it.followedUserId == user.id
+            } != null
+
+            UserResponseItem(
+                username = user.username,
+                profilePictureUrl = user.profileImageUrl,
+                bio = user.bio,
+                isFollowing = isFollowing
+            )
+        }
+    }
 
     sealed class ValidationEvent {
         object UserExist : ValidationEvent()

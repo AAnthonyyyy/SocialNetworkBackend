@@ -2,6 +2,7 @@ package com.hgm.routes
 
 import com.auth0.jwt.JWT
 import com.auth0.jwt.algorithms.Algorithm
+import com.hgm.data.models.User
 import com.hgm.data.requests.CreateAccountRequest
 import com.hgm.data.requests.LoginRequest
 import com.hgm.data.responses.AuthResponse
@@ -13,8 +14,10 @@ import com.hgm.utils.ApiResponseMessage.FIELDS_BLANK
 import com.hgm.utils.ApiResponseMessage.LOGIN_FAILED
 import com.hgm.utils.ApiResponseMessage.REGISTER_SUCCESSFUL
 import com.hgm.utils.Constants
+import com.hgm.utils.QueryParams
 import com.hgm.utils.userId
 import io.ktor.application.*
+import io.ktor.auth.*
 import io.ktor.http.*
 import io.ktor.request.*
 import io.ktor.response.*
@@ -100,7 +103,10 @@ fun Route.loginUser(
         }
 
 
-        val doesPasswordMatch = userService.doesPasswordMatchForUser(request)
+        val doesPasswordMatch = userService.isValidPassword(
+            enterPassword = request.password,
+            actualPassword = user.password
+        )
         if (doesPasswordMatch) {
             // 生成Token
             val expiresIn = 1000L * 60L * 60L * 24L * 365L //过期时间为一年
@@ -126,6 +132,31 @@ fun Route.loginUser(
                     successful = false,
                     message = LOGIN_FAILED
                 )
+            )
+        }
+    }
+}
+
+
+/** 查询用户 */
+fun Route.searchUser(
+    userService: UserService
+) {
+    authenticate {
+        get("/api/user/query") {
+            val query = call.parameters[QueryParams.PARAM_QUERY]
+            if (query.isNullOrBlank()) {
+                call.respond(
+                    HttpStatusCode.OK,
+                    listOf<User>()
+                )
+                return@get
+            }
+
+            val searchResult = userService.searchForUsers(query, call.userId)
+            call.respond(
+                HttpStatusCode.OK,
+                searchResult
             )
         }
     }

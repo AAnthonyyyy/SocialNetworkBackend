@@ -9,7 +9,7 @@ import org.litote.kmongo.eq
 class FollowRepositoryImpl(
     db: CoroutineDatabase
 ) : FollowRepository {
-    private val following = db.getCollection<Following>()
+    private val follows = db.getCollection<Following>()
     private val users = db.getCollection<User>()
 
     override suspend fun followUserIfExist(
@@ -22,7 +22,7 @@ class FollowRepositoryImpl(
         if (!doesFollowingUserExist || !doesFollowedUserExist) {
             return false
         }
-        following.insertOne(
+        follows.insertOne(
             Following(
                 followingUserId,
                 followedUserId
@@ -34,12 +34,25 @@ class FollowRepositoryImpl(
 
     override suspend fun unFollowUserIfExist(followingUserId: String, followedUserId: String): Boolean {
         // 虽然没有查询用户操作，但是在删除之前进行了条件过滤等同于查询用户是否存在
-        val deleteResult = following.deleteOne(
+        val deleteResult = follows.deleteOne(
             and(
                 Following::followingUserId eq followingUserId,
                 Following::followedUserId eq followedUserId
             )
         )
         return deleteResult.deletedCount > 0
+    }
+
+    override suspend fun checkUserFollowing(followingUserId: String, followedUserId: String): Boolean {
+        return follows.findOne(
+            and(
+                Following::followingUserId eq followingUserId,
+                Following::followedUserId eq followedUserId
+            )
+        ) != null
+    }
+
+    override suspend fun getFollowsByUser(userId: String): List<Following> {
+        return follows.find(Following::followingUserId eq userId).toList()
     }
 }

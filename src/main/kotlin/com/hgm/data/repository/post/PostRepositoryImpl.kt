@@ -12,18 +12,10 @@ class PostRepositoryImpl(
 ) : PostRepository {
 
     private val posts = db.getCollection<Post>()
-    private val users = db.getCollection<User>()
     private val following = db.getCollection<Following>()
 
     override suspend fun createPost(post: Post): Boolean {
-        //检查用户是否存在
-        // TODO("这里我认为没必要查询用户是否存在")
-        val doesUserExist = users.findOneById(post.userId) != null
-        if (!doesUserExist) {
-            return false
-        }
-        posts.insertOne(post)
-        return true
+        return posts.insertOne(post).wasAcknowledged()
     }
 
     override suspend fun deletePost(postId: String) {

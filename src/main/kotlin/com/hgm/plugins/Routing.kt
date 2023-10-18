@@ -29,7 +29,7 @@ fun Application.configureRouting() {
         updateUserProfile(userService)
 
         //关注路由
-        followUser(followService,activityService)
+        followUser(followService, activityService)
         unfollowUser(followService)
 
         //帖子路由

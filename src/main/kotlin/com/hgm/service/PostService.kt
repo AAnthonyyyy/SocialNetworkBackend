@@ -9,11 +9,15 @@ class PostService(
     private val repository: PostRepository
 ) {
 
-    suspend fun createPost(request: CreatePostRequest,userId: String): Boolean {
+    suspend fun createPost(
+        request: CreatePostRequest,
+        userId: String,
+        imageUrl: String
+    ): Boolean {
         return repository.createPost(
             Post(
                 userId = userId,
-                imageUrl = "",
+                imageUrl = imageUrl,
                 description = request.description,
                 timestamp = System.currentTimeMillis()
             )
@@ -38,11 +42,11 @@ class PostService(
     }
 
 
-    suspend fun getPost(postId: String): Post?{
+    suspend fun getPost(postId: String): Post? {
         return repository.getPost(postId)
     }
 
-    suspend fun deletePost(postId: String){
+    suspend fun deletePost(postId: String) {
         repository.deletePost(postId)
     }
 }

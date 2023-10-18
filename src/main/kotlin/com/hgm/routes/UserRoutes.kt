@@ -11,16 +11,12 @@ import com.hgm.data.responses.AuthResponse
 import com.hgm.data.responses.BaseResponse
 import com.hgm.service.PostService
 import com.hgm.service.UserService
-import com.hgm.utils.ApiResponseMessage
+import com.hgm.utils.*
 import com.hgm.utils.ApiResponseMessage.EMAIL_ALREADY_EXIST
 import com.hgm.utils.ApiResponseMessage.FIELDS_BLANK
 import com.hgm.utils.ApiResponseMessage.LOGIN_FAILED
 import com.hgm.utils.ApiResponseMessage.REGISTER_SUCCESSFUL
-import com.hgm.utils.Constants
 import com.hgm.utils.Constants.BASE_URL
-import com.hgm.utils.Constants.PROFILE_PICTURE_PATH
-import com.hgm.utils.QueryParams
-import com.hgm.utils.userId
 import io.ktor.application.*
 import io.ktor.auth.*
 import io.ktor.http.*
@@ -214,19 +210,16 @@ fun Route.updateUserProfile(
             var fileName: String? = null
 
             //多部分上传，按照类型分开处理（表单 or 图片）
-            multipart.forEachPart { postData ->
-                when (postData) {
+            multipart.forEachPart { partData ->
+                when (partData) {
                     is PartData.FormItem -> {
-                        if (postData.name == "update_profile_data") {
-                            updateProfileRequest = gson.fromJson(postData.value, UpdateProfileRequest::class.java)
+                        if (partData.name == "update_profile_data") {
+                            updateProfileRequest = gson.fromJson(partData.value, UpdateProfileRequest::class.java)
                         }
                     }
 
                     is PartData.FileItem -> {
-                        val fileBytes = postData.streamProvider().readBytes()
-                        val fileExtension = postData.originalFileName?.takeLastWhile { it != '.' }
-                        fileName = UUID.randomUUID().toString() + "." + fileExtension
-                        File("$PROFILE_PICTURE_PATH$fileName").writeBytes(fileBytes)
+                        fileName = partData.save(Constants.PROFILE_PICTURE_PATH)
                     }
 
                     is PartData.BinaryItem -> Unit
@@ -252,7 +245,7 @@ fun Route.updateUserProfile(
                     )
                 } else {
                     //更新失败的话需要把上传的照片资源删除掉
-                    File("src/main/${PROFILE_PICTURE_PATH}/$fileName").delete()
+                    File("src/main/${Constants.PROFILE_PICTURE_PATH}/$fileName").delete()
                     call.respond(HttpStatusCode.InternalServerError)
                 }
             } ?: kotlin.run {

@@ -38,12 +38,15 @@ class UserRepositoryImpl(
     }
 
     override suspend fun searchForUser(query: String): List<User> {
+        //查询包含关键字并且以粉丝量高的用户降序排序
         return users.find(
             or(
                 User::username regex Regex("(?i).*$query.*"),
                 User::email eq query
             )
-        ).toList()
+        )
+            .descendingSort(User::followedCount)
+            .toList()
     }
 
     override suspend fun updateUser(

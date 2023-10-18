@@ -6,6 +6,7 @@ import com.hgm.data.utils.ParentType
 import com.hgm.service.ActivityService
 import com.hgm.service.LikeService
 import com.hgm.utils.ApiResponseMessage
+import com.hgm.utils.QueryParams
 import com.hgm.utils.userId
 import io.ktor.application.*
 import io.ktor.auth.*
@@ -26,7 +27,7 @@ fun Route.likePost(
             }
 
             val likeSuccessful =
-                likeService.likePost(call.userId, request.parentId,request.parentType)
+                likeService.likePost(call.userId, request.parentId, request.parentType)
             if (likeSuccessful) {
                 activityService.createLikeActivity(
                     byUserId = call.userId,
@@ -82,6 +83,29 @@ fun Route.unlikePost(
                     )
                 )
             }
+        }
+    }
+}
+
+fun Route.getLikesForParent(
+    likeService: LikeService
+) {
+    authenticate {
+        get("/api/like/parent") {
+            val parentId = call.parameters[QueryParams.PARAM_PARENT_ID] ?: kotlin.run {
+                call.respond(HttpStatusCode.BadRequest)
+                return@get
+            }
+
+
+            val usersWhoLikedParent = likeService.getUsersWhoLikesParent(
+                parentId = parentId,
+                userId = call.userId
+            )
+            call.respond(
+                HttpStatusCode.OK,
+                usersWhoLikedParent
+            )
         }
     }
 }

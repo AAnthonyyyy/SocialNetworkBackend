@@ -40,6 +40,7 @@ fun Application.configureRouting() {
         //点赞路由
         likePost(likeService, activityService)
         unlikePost(likeService)
+        getLikesForParent(likeService)
 
         //评论路由
         addComment(commentService, activityService)

@@ -8,6 +8,9 @@ fun PartData.FileItem.save(path: String): String {
     val fileBytes = streamProvider().readBytes()
     val fileExtension = originalFileName?.takeLastWhile { it != '.' }
     val fileName = UUID.randomUUID().toString() + "." + fileExtension
+    //先创建目录，然后再把图片存入
+    val folder = File(path)
+    folder.mkdirs()
     File("$path$fileName").writeBytes(fileBytes)
     return fileName
 }

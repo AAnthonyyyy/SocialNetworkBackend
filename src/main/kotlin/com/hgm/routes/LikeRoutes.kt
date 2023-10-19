@@ -36,7 +36,7 @@ fun Route.likePost(
                 )
                 call.respond(
                     HttpStatusCode.OK,
-                    BaseResponse(
+                    BaseResponse<Unit>(
                         successful = true,
                         message = ApiResponseMessage.LIKE_POST_SUCCESSFUL
                     )
@@ -44,7 +44,7 @@ fun Route.likePost(
             } else {
                 call.respond(
                     HttpStatusCode.OK,
-                    BaseResponse(
+                    BaseResponse<Unit>(
                         successful = false,
                         message = ApiResponseMessage.USER_NOT_FOUND
                     )
@@ -69,7 +69,7 @@ fun Route.unlikePost(
             if (unlikeSuccessful) {
                 call.respond(
                     HttpStatusCode.OK,
-                    BaseResponse(
+                    BaseResponse<Unit>(
                         successful = true,
                         message = ApiResponseMessage.LIKE_POST_SUCCESSFUL
                     )
@@ -77,7 +77,7 @@ fun Route.unlikePost(
             } else {
                 call.respond(
                     HttpStatusCode.OK,
-                    BaseResponse(
+                    BaseResponse<Unit>(
                         successful = false,
                         message = ApiResponseMessage.USER_NOT_FOUND
                     )

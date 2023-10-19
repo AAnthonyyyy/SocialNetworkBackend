@@ -30,8 +30,7 @@ fun Route.addComment(
             when (commentService.addComment(request, call.userId)) {
                 is CommentService.ValidationEvent.CommentTooLong -> {
                     call.respond(
-                        HttpStatusCode.OK,
-                        BaseResponse(
+                        BaseResponse<Unit>(
                             successful = false,
                             message = ApiResponseMessage.COMMENT_LENGTH_TOO_LONG
                         )
@@ -39,8 +38,7 @@ fun Route.addComment(
                 }
                 is CommentService.ValidationEvent.FieldEmpty -> {
                     call.respond(
-                        HttpStatusCode.OK,
-                        BaseResponse(
+                        BaseResponse<Unit>(
                             successful = false,
                             message = ApiResponseMessage.FIELDS_BLANK
                         )
@@ -53,7 +51,7 @@ fun Route.addComment(
                     )
                     call.respond(
                         HttpStatusCode.OK,
-                        BaseResponse(
+                        BaseResponse<Unit>(
                             successful = true,
                             message = ApiResponseMessage.ADD_COMMENT_SUCCESSFUL
                         )
@@ -106,7 +104,7 @@ fun Route.deleteComment(
                 likeService.removeLikeForParent(request.commentId)
                 call.respond(
                     HttpStatusCode.OK,
-                    BaseResponse(
+                    BaseResponse<Unit>(
                         successful = true,
                         message = ApiResponseMessage.DELETE_COMMENT_SUCCESSFUL
                     )
@@ -114,7 +112,7 @@ fun Route.deleteComment(
             } else {
                 call.respond(
                     HttpStatusCode.NotFound,
-                    BaseResponse(
+                    BaseResponse<Unit>(
                         successful = false,
                     )
                 )

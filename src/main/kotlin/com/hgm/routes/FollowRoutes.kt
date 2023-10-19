@@ -42,15 +42,14 @@ fun Route.followUser(
                 )
                 call.respond(
                     HttpStatusCode.OK,
-                    BaseResponse(
+                    BaseResponse<Unit>(
                         successful = true,
                         message = FOLLOWING_SUCCESSFUL
                     )
                 )
             } else {
                 call.respond(
-                    HttpStatusCode.OK,
-                    BaseResponse(
+                    BaseResponse<Unit>(
                         successful = false,
                         message = USER_NOT_FOUND
                     )
@@ -74,15 +73,14 @@ fun Route.unfollowUser(
         if (didUserExist) {
             call.respond(
                 HttpStatusCode.OK,
-                BaseResponse(
+                BaseResponse<Unit>(
                     successful = true,
                     message = UNFOLLOWING_SUCCESSFUL
                 )
             )
         } else {
             call.respond(
-                HttpStatusCode.OK,
-                BaseResponse(
+                BaseResponse<Unit>(
                     successful = false,
                     message = USER_NOT_FOUND
                 )

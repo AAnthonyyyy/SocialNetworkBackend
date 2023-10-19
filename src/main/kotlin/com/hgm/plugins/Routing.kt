@@ -20,9 +20,12 @@ fun Application.configureRouting() {
     val jwtSecret = environment.config.property("jwt.secret").getString()
 
     routing {
-        //用户路由
+        //身份验证路由
+        authenticate()
         registerUser(userService)
         loginUser(userService, jwtAudience, jwtIssuer, jwtSecret)
+
+        //用户路由
         searchUser(userService)
         getUserProfile(userService)
         getPostsForProfile(postService)

@@ -1,9 +1,9 @@
 package com.hgm.routes
 
 import com.google.gson.Gson
-import com.hgm.data.models.User
 import com.hgm.data.requests.UpdateProfileRequest
 import com.hgm.data.responses.BaseResponse
+import com.hgm.data.responses.UserItemResponse
 import com.hgm.service.PostService
 import com.hgm.service.UserService
 import com.hgm.utils.*
@@ -29,7 +29,7 @@ fun Route.searchUser(
             if (query.isNullOrBlank()) {
                 call.respond(
                     HttpStatusCode.OK,
-                    listOf<User>()
+                    listOf<UserItemResponse>()
                 )
                 return@get
             }
@@ -68,7 +68,10 @@ fun Route.getUserProfile(
             }
             call.respond(
                 HttpStatusCode.OK,
-                profile
+                BaseResponse(
+                    successful = true,
+                    data = profile
+                )
             )
         }
     }
@@ -84,7 +87,8 @@ fun Route.updateUserProfile(
         put("/api/user/update") {
             val multipart = call.receiveMultipart()
             var updateProfileRequest: UpdateProfileRequest? = null
-            var fileName: String? = null
+            var profilePictureFileName: String? = null
+            var bannerPictureFileName: String? = null
 
             //多部分上传，按照类型分开处理（表单 or 图片）
             multipart.forEachPart { partData ->
@@ -96,20 +100,27 @@ fun Route.updateUserProfile(
                     }
 
                     is PartData.FileItem -> {
-                        fileName = partData.save(Constants.PROFILE_PICTURE_PATH)
+                        if (partData.name == "profile_picture") {
+                            profilePictureFileName = partData.save(Constants.PROFILE_PICTURE_PATH)
+                        } else if (partData.name == "banner_picture") {
+                            bannerPictureFileName = partData.save(Constants.BANNER_PICTURE_PATH)
+                        }
                     }
 
                     is PartData.BinaryItem -> Unit
                 }
             }
 
-            //图片路径
-            val profilePictureUrl = "${BASE_URL}profile_pictures/$fileName"
+            //头像路径
+            val profilePictureUrl = "${BASE_URL}profile_pictures/$profilePictureFileName"
+            //背景图路劲
+            val bannerPictureUrl = "${BASE_URL}banner_pictures/$bannerPictureFileName"
 
             updateProfileRequest?.let { request ->
                 val updateAcknowledge = userService.updateUser(
                     userId = call.userId,
-                    profilePictureUrl = profilePictureUrl,
+                    profilePictureUrl = if (profilePictureFileName == null) null else profilePictureUrl,
+                    bannerPictureUrl = if (bannerPictureFileName == null) null else bannerPictureUrl,
                     request = request
                 )
                 if (updateAcknowledge) {
@@ -122,7 +133,7 @@ fun Route.updateUserProfile(
                     )
                 } else {
                     //更新失败的话需要把上传的照片资源删除掉
-                    File("src/main/${Constants.PROFILE_PICTURE_PATH}/$fileName").delete()
+                    File("src/main/${Constants.PROFILE_PICTURE_PATH}/$profilePictureFileName").delete()
                     call.respond(HttpStatusCode.InternalServerError)
                 }
             } ?: kotlin.run {
@@ -140,6 +151,8 @@ fun Route.getPostsForProfile(
 ) {
     authenticate {
         get("/api/user/post") {
+            //.......
+            val userId = call.parameters[QueryParams.PARAM_USER_ID] ?: call.userId
             val page =
                 call.parameters[QueryParams.PARAM_PAGE]?.toIntOrNull() ?: Constants.DEFAULT_POST_PAGE
             val pageSize =
@@ -147,7 +160,7 @@ fun Route.getPostsForProfile(
 
 
             val posts = postService.getPostsForProfile(
-                userId = call.userId,
+                userId = userId,
                 page = page,
                 pageSize = pageSize
             )

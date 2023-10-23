@@ -1,6 +1,6 @@
 package com.hgm.service
 
-import com.hgm.data.models.Comment
+import com.hgm.data.model.Comment
 import com.hgm.data.repository.comment.CommentRepository
 import com.hgm.data.requests.AddCommentRequest
 import com.hgm.utils.Constants

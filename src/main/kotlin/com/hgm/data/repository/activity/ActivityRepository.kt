@@ -1,6 +1,6 @@
 package com.hgm.data.repository.activity
 
-import com.hgm.data.models.Activity
+import com.hgm.data.model.Activity
 import com.hgm.utils.Constants
 
 interface ActivityRepository {

@@ -1,7 +1,7 @@
 package com.hgm.data.repository.follow
 
-import com.hgm.data.models.Following
-import com.hgm.data.models.User
+import com.hgm.data.model.Following
+import com.hgm.data.model.User
 import org.litote.kmongo.and
 import org.litote.kmongo.coroutine.CoroutineDatabase
 import org.litote.kmongo.eq

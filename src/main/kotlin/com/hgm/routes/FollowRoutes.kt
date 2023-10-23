@@ -1,6 +1,6 @@
 package com.hgm.routes
 
-import com.hgm.data.models.Activity
+import com.hgm.data.model.Activity
 import com.hgm.data.requests.FollowRequest
 import com.hgm.data.responses.BaseResponse
 import com.hgm.data.utils.ActivityType

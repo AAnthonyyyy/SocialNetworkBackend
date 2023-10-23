@@ -1,6 +1,6 @@
 package com.hgm.data.repository.user
 
-import com.hgm.data.models.User
+import com.hgm.data.model.User
 import com.hgm.data.requests.UpdateProfileRequest
 import org.litote.kmongo.coroutine.CoroutineDatabase
 import org.litote.kmongo.eq
@@ -53,6 +53,7 @@ class UserRepositoryImpl(
     override suspend fun updateUser(
         userId: String,
         profilePictureUrl: String?,
+        bannerPictureUrl: String?,
         request: UpdateProfileRequest
     ): Boolean {
         val user = users.findOneById(userId) ?: return false
@@ -64,6 +65,7 @@ class UserRepositoryImpl(
                 bio = request.bio,
                 email = user.email,
                 profileImageUrl = profilePictureUrl ?: user.profileImageUrl,
+                bannerUrl = bannerPictureUrl ?: user.bannerUrl,
                 githubUrl = request.githubUrl,
                 instagramUrl = request.instagramUrl,
                 linkedInUrl = request.linkedInUrl,

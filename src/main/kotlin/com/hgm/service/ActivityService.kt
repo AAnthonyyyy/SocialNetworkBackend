@@ -1,6 +1,6 @@
 package com.hgm.service
 
-import com.hgm.data.models.Activity
+import com.hgm.data.model.Activity
 import com.hgm.data.repository.activity.ActivityRepository
 import com.hgm.data.repository.comment.CommentRepository
 import com.hgm.data.repository.post.PostRepository

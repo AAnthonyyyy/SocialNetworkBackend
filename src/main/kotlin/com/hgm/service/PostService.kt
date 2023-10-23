@@ -1,6 +1,6 @@
 package com.hgm.service
 
-import com.hgm.data.models.Post
+import com.hgm.data.model.Post
 import com.hgm.data.repository.post.PostRepository
 import com.hgm.data.requests.CreatePostRequest
 import com.hgm.utils.Constants

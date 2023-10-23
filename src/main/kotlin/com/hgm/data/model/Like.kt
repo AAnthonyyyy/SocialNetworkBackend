@@ -1,9 +1,7 @@
-package com.hgm.data.models
+package com.hgm.data.model
 
-import com.hgm.data.utils.ParentType
 import org.bson.codecs.pojo.annotations.BsonId
 import org.bson.types.ObjectId
-import java.sql.Timestamp
 
 data class Like(
     val userId: String,

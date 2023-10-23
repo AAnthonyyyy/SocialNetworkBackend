@@ -1,6 +1,6 @@
 package com.hgm.data.repository.like
 
-import com.hgm.data.models.Like
+import com.hgm.data.model.Like
 import com.hgm.utils.Constants
 
 interface LikeRepository {

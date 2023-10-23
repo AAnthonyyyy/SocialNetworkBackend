@@ -1,10 +1,7 @@
 package com.hgm.data.repository.like
 
-import com.hgm.data.models.Like
-import com.hgm.data.models.Post
-import com.hgm.data.models.User
-import com.hgm.data.utils.ParentType
-import com.hgm.utils.Constants
+import com.hgm.data.model.Like
+import com.hgm.data.model.User
 import org.litote.kmongo.and
 import org.litote.kmongo.coroutine.CoroutineDatabase
 import org.litote.kmongo.eq

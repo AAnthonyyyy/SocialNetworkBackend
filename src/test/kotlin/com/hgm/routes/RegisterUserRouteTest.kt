@@ -2,7 +2,7 @@ package com.hgm.routes
 
 import com.google.common.truth.Truth.assertThat
 import com.google.gson.Gson
-import com.hgm.data.models.User
+import com.hgm.data.model.User
 import com.hgm.data.requests.CreateAccountRequest
 import com.hgm.data.responses.BaseResponse
 import com.hgm.di.testModule

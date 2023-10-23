@@ -1,6 +1,6 @@
 package com.hgm.data.repository.comment
 
-import com.hgm.data.models.Comment
+import com.hgm.data.model.Comment
 
 interface CommentRepository {
 

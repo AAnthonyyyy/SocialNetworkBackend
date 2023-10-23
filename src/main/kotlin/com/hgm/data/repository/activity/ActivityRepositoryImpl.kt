@@ -1,12 +1,8 @@
 package com.hgm.data.repository.activity
 
-import com.hgm.data.models.Activity
-import com.hgm.data.models.Following
-import com.hgm.data.models.Post
-import org.litote.kmongo.and
+import com.hgm.data.model.Activity
 import org.litote.kmongo.coroutine.CoroutineDatabase
 import org.litote.kmongo.eq
-import org.litote.kmongo.`in`
 
 class ActivityRepositoryImpl(
     db: CoroutineDatabase

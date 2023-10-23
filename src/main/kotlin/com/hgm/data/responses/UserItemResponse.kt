@@ -1,6 +1,7 @@
 package com.hgm.data.responses
 
-data class UserResponseItem(
+data class UserItemResponse(
+    val userId: String,
     val username: String,
     val profilePictureUrl: String,
     val bio: String,

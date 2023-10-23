@@ -1,6 +1,6 @@
 package com.hgm.data.repository.follow
 
-import com.hgm.data.models.Following
+import com.hgm.data.model.Following
 
 interface FollowRepository {
 

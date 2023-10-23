@@ -1,6 +1,6 @@
 package com.hgm.data.repository.user
 
-import com.hgm.data.models.User
+import com.hgm.data.model.User
 import com.hgm.data.requests.UpdateProfileRequest
 
 interface UserRepository {
@@ -9,7 +9,7 @@ interface UserRepository {
 
     suspend fun getUserById(id: String): User?
 
-    suspend fun updateUser(userId: String, profilePictureUrl: String?, request: UpdateProfileRequest): Boolean
+    suspend fun updateUser(userId: String, profilePictureUrl: String?, bannerPictureUrl: String?, request: UpdateProfileRequest): Boolean
 
     suspend fun getUserByEmail(email: String): User?
 

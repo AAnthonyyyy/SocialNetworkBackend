@@ -1,12 +1,12 @@
 package com.hgm.service
 
-import com.hgm.data.models.User
+import com.hgm.data.model.User
 import com.hgm.data.repository.follow.FollowRepository
 import com.hgm.data.repository.user.UserRepository
 import com.hgm.data.requests.CreateAccountRequest
 import com.hgm.data.requests.UpdateProfileRequest
 import com.hgm.data.responses.ProfileResponse
-import com.hgm.data.responses.UserResponseItem
+import com.hgm.data.responses.UserItemResponse
 
 class UserService(
     private val userRepository: UserRepository,
@@ -21,8 +21,10 @@ class UserService(
         //查询该用户的信息
         val user = userRepository.getUserById(userId) ?: return null
         return ProfileResponse(
+            userId = user.id,
             username = user.username,
             profilePictureUrl = user.profileImageUrl,
+            bannerUrl = user.bannerUrl,
             bio = user.bio,
             followingCount = user.followingCount,
             followedCount = user.followedCount,
@@ -63,6 +65,7 @@ class UserService(
                 username = request.username,
                 password = request.password,
                 profileImageUrl = "",
+                bannerUrl = "",
                 bio = "",
                 githubUrl = "",
                 instagramUrl = "",
@@ -73,14 +76,15 @@ class UserService(
 
     suspend fun updateUser(
         userId: String,
-        profilePictureUrl: String,
+        profilePictureUrl: String?,
+        bannerPictureUrl: String?,
         request: UpdateProfileRequest
     ): Boolean {
-        return userRepository.updateUser(userId, profilePictureUrl, request)
+        return userRepository.updateUser(userId, profilePictureUrl,bannerPictureUrl, request)
     }
 
 
-    suspend fun searchForUsers(query: String, userId: String): List<UserResponseItem> {
+    suspend fun searchForUsers(query: String, userId: String): List<UserItemResponse> {
         //获取当前用户的所有关注人信息
         val followsByUser = followRepository.getFollowsByUser(userId)
 
@@ -90,7 +94,8 @@ class UserService(
                 it.followedUserId == user.id
             } != null
 
-            UserResponseItem(
+            UserItemResponse(
+                userId = user.id,
                 username = user.username,
                 profilePictureUrl = user.profileImageUrl,
                 bio = user.bio,

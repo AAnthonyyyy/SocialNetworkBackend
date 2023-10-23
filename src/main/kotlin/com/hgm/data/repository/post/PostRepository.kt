@@ -1,6 +1,6 @@
 package com.hgm.data.repository.post
 
-import com.hgm.data.models.Post
+import com.hgm.data.model.Post
 import com.hgm.utils.Constants.DEFAULT_POST_PAGE_SIZE
 import com.hgm.utils.Constants.DEFAULT_POST_PAGE
 

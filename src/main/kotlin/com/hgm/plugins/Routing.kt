@@ -1,5 +1,6 @@
 package com.hgm.plugins
 
+import com.hgm.data.model.Skill
 import com.hgm.routes.*
 import com.hgm.service.*
 import io.ktor.application.*
@@ -14,6 +15,7 @@ fun Application.configureRouting() {
     val likeService: LikeService by inject()
     val commentService: CommentService by inject()
     val activityService: ActivityService by inject()
+    val skillService: SkillService by inject()
 
     val jwtAudience = environment.config.property("jwt.audience").getString()
     val jwtIssuer = environment.config.property("jwt.domain").getString()
@@ -52,6 +54,8 @@ fun Application.configureRouting() {
 
         //活动路由
         getActivities(activityService)
+
+        getSkills(skillService)
 
 
         //静态路由用于显示资源图片

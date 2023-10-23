@@ -1,6 +1,6 @@
 package com.hgm.repository.user
 
-import com.hgm.data.models.User
+import com.hgm.data.model.User
 import com.hgm.data.repository.user.UserRepository
 
 /**

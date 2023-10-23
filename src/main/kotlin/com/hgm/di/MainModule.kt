@@ -11,6 +11,8 @@ import com.hgm.data.repository.like.LikeRepository
 import com.hgm.data.repository.like.LikeRepositoryImpl
 import com.hgm.data.repository.post.PostRepository
 import com.hgm.data.repository.post.PostRepositoryImpl
+import com.hgm.data.repository.skill.SkillRepository
+import com.hgm.data.repository.skill.SkillRepositoryImpl
 import com.hgm.data.repository.user.UserRepository
 import com.hgm.data.repository.user.UserRepositoryImpl
 import com.hgm.service.*
@@ -47,15 +49,19 @@ val mainModule = module {
     single<ActivityRepository> {
         ActivityRepositoryImpl(get())
     }
+    single<SkillRepository> {
+        SkillRepositoryImpl(get())
+    }
 
 
     // Service
-    single { UserService(get(),get()) }
+    single { UserService(get(), get()) }
     single { FollowService(get()) }
     single { PostService(get()) }
-    single { LikeService(get(),get(),get()) }
+    single { LikeService(get(), get(), get()) }
     single { CommentService(get()) }
-    single { ActivityService(get(),get(),get()) }
+    single { ActivityService(get(), get(), get()) }
+    single { SkillService(get()) }
 
     single { Gson() }
 }

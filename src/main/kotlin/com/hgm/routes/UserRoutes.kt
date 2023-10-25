@@ -145,29 +145,3 @@ fun Route.updateUserProfile(
 }
 
 
-/** 获取个人发布的帖子 */
-fun Route.getPostsForProfile(
-    postService: PostService,
-) {
-    authenticate {
-        get("/api/user/post") {
-            //.......
-            val userId = call.parameters[QueryParams.PARAM_USER_ID] ?: call.userId
-            val page =
-                call.parameters[QueryParams.PARAM_PAGE]?.toIntOrNull() ?: Constants.DEFAULT_POST_PAGE
-            val pageSize =
-                call.parameters[QueryParams.PARAM_PAGE_SIZE]?.toIntOrNull() ?: Constants.DEFAULT_POST_PAGE_SIZE
-
-
-            val posts = postService.getPostsForProfile(
-                userId = userId,
-                page = page,
-                pageSize = pageSize
-            )
-            call.respond(
-                HttpStatusCode.OK,
-                posts
-            )
-        }
-    }
-}

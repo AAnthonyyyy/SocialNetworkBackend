@@ -49,6 +49,7 @@ fun Route.followUser(
                 )
             } else {
                 call.respond(
+                    HttpStatusCode.OK,
                     BaseResponse<Unit>(
                         successful = false,
                         message = USER_NOT_FOUND

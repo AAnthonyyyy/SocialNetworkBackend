@@ -19,14 +19,13 @@ class FollowRepositoryImpl(
         // 添加关注之前要查询两人是否存在
         val doesFollowingUserExist = users.findOneById(followingUserId) != null
         val doesFollowedUserExist = users.findOneById(followedUserId) != null
+        println("关注者：$doesFollowingUserExist")
+        println("被关注者：$doesFollowedUserExist")
         if (!doesFollowingUserExist || !doesFollowedUserExist) {
             return false
         }
         follows.insertOne(
-            Following(
-                followingUserId,
-                followedUserId
-            )
+            Following(followingUserId, followedUserId)
         )
         return true
     }

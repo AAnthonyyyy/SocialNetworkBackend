@@ -1,5 +1,5 @@
 package com.hgm.data.requests
 
-data class FollowRequest(
+data class FollowUpdateRequest(
     val followedUserId: String,
 )

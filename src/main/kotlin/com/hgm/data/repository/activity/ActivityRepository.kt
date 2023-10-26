@@ -1,6 +1,7 @@
 package com.hgm.data.repository.activity
 
 import com.hgm.data.model.Activity
+import com.hgm.data.responses.ActivityResponse
 import com.hgm.utils.Constants
 
 interface ActivityRepository {
@@ -13,5 +14,5 @@ interface ActivityRepository {
         userId: String,
         page: Int = Constants.DEFAULT_ACTIVITY_PAGE,
         pageSize: Int = Constants.DEFAULT_ACTIVITY_PAGE_SIZE
-    ):List<Activity>
+    ):List<ActivityResponse>
 }

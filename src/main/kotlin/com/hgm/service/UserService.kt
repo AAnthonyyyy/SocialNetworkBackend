@@ -80,7 +80,7 @@ class UserService(
         bannerPictureUrl: String?,
         request: UpdateProfileRequest
     ): Boolean {
-        return userRepository.updateUser(userId, profilePictureUrl,bannerPictureUrl, request)
+        return userRepository.updateUser(userId, profilePictureUrl, bannerPictureUrl, request)
     }
 
 
@@ -93,7 +93,6 @@ class UserService(
             val isFollowing = followsByUser.find {
                 it.followedUserId == user.id
             } != null
-
             UserItemResponse(
                 userId = user.id,
                 username = user.username,
@@ -101,7 +100,7 @@ class UserService(
                 bio = user.bio,
                 isFollowing = isFollowing
             )
-        }
+        }.filter { it.userId == userId }
     }
 
     sealed class ValidationEvent {

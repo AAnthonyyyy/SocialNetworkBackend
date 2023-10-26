@@ -23,6 +23,8 @@ fun Route.getActivities(
                 call.parameters[QueryParams.PARAM_PAGE_SIZE]?.toIntOrNull() ?: Constants.DEFAULT_ACTIVITY_PAGE_SIZE
 
             val activities = service.getActivitiesForUser(call.userId, page, pageSize)
+
+
             call.respond(
                 HttpStatusCode.OK,
                 activities

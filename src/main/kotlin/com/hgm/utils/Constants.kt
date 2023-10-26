@@ -13,8 +13,7 @@ object Constants {
     const val KEY_CLAIM_USER_ID = "userId"
 
     const val MAX_COMMENT_LENGTH = 1000
-    //const val BASE_URL = "http://192.168.31.161:8080/"
-    const val BASE_URL = "http://10.0.2.2:8080/"
+    const val BASE_URL = "http://192.168.31.164:8080/"
     const val PROFILE_PICTURE_PATH = "build/resources/main/static/profile_pictures/"
     const val BANNER_PICTURE_PATH = "build/resources/main/static/banner_pictures/"
     const val POST_PICTURE_PATH = "build/resources/main/static/post_pictures/"

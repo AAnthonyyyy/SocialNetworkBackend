@@ -4,6 +4,7 @@ import com.hgm.data.model.Activity
 import com.hgm.data.repository.activity.ActivityRepository
 import com.hgm.data.repository.comment.CommentRepository
 import com.hgm.data.repository.post.PostRepository
+import com.hgm.data.responses.ActivityResponse
 import com.hgm.data.utils.ActivityType
 import com.hgm.data.utils.ParentType
 import com.hgm.utils.Constants
@@ -23,9 +24,8 @@ class ActivityService(
         postId: String,
     ): Boolean {
         val toUserId = postRepository.getPost(postId)?.userId ?: return false
-
         //忽略本人点赞自己的内容时会创建活动
-        if (byUserId==toUserId){
+        if (byUserId == toUserId) {
             return false
         }
 
@@ -65,7 +65,7 @@ class ActivityService(
             is ParentType.None -> return false
         } ?: return false
 
-        if (byUserId==toUserId){
+        if (byUserId == toUserId) {
             return false
         }
 
@@ -93,7 +93,7 @@ class ActivityService(
         userId: String,
         page: Int = Constants.DEFAULT_ACTIVITY_PAGE,
         pageSize: Int = Constants.DEFAULT_ACTIVITY_PAGE_SIZE
-    ): List<Activity> {
+    ): List<ActivityResponse> {
         return repository.getActivitiesForUser(userId, page, pageSize)
     }
 }

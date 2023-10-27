@@ -1,6 +1,5 @@
 package com.hgm.plugins
 
-import com.hgm.data.model.Skill
 import com.hgm.routes.*
 import com.hgm.service.*
 import io.ktor.application.*
@@ -38,6 +37,7 @@ fun Application.configureRouting() {
         unfollowUser(followService)
 
         //帖子路由
+        getPostDetail(postService)
         createPost(postService)
         getPostsForFollows(postService)
         deletePost(postService, likeService, commentService)
@@ -50,7 +50,7 @@ fun Application.configureRouting() {
         //评论路由
         addComment(commentService, activityService)
         deleteComment(commentService, likeService)
-        getCommentByPost(commentService)
+        getCommentForPost(commentService)
 
         //活动路由
         getActivities(activityService)

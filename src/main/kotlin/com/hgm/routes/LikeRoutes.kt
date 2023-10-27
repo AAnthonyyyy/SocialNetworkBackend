@@ -65,7 +65,7 @@ fun Route.unlikePost(
                 return@delete
             }
 
-            val unlikeSuccessful = likeService.unlikePost(call.userId, request.parentId)
+            val unlikeSuccessful = likeService.unlikePost(call.userId, request.parentId,request.parentType)
             if (unlikeSuccessful) {
                 call.respond(
                     HttpStatusCode.OK,

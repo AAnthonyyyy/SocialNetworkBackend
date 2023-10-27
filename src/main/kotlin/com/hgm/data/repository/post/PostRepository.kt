@@ -1,6 +1,7 @@
 package com.hgm.data.repository.post
 
 import com.hgm.data.model.Post
+import com.hgm.data.responses.PostResponse
 import com.hgm.utils.Constants.DEFAULT_POST_PAGE_SIZE
 import com.hgm.utils.Constants.DEFAULT_POST_PAGE
 
@@ -23,5 +24,7 @@ interface PostRepository {
     ): List<Post>
 
     suspend fun getPost(postId: String): Post?
+
+    suspend fun getPostDetails(userId: String, postId: String): PostResponse?
 
 }

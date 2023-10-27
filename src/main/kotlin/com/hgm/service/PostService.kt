@@ -3,6 +3,7 @@ package com.hgm.service
 import com.hgm.data.model.Post
 import com.hgm.data.repository.post.PostRepository
 import com.hgm.data.requests.CreatePostRequest
+import com.hgm.data.responses.PostResponse
 import com.hgm.utils.Constants
 
 class PostService(
@@ -44,6 +45,10 @@ class PostService(
 
     suspend fun getPost(postId: String): Post? {
         return repository.getPost(postId)
+    }
+
+    suspend fun getPostDetails(ownUserId: String, postId: String): PostResponse? {
+        return repository.getPostDetails(ownUserId, postId)
     }
 
     suspend fun deletePost(postId: String) {

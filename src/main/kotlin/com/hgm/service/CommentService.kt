@@ -2,11 +2,14 @@ package com.hgm.service
 
 import com.hgm.data.model.Comment
 import com.hgm.data.repository.comment.CommentRepository
+import com.hgm.data.repository.user.UserRepository
 import com.hgm.data.requests.AddCommentRequest
+import com.hgm.data.responses.CommentResponse
 import com.hgm.utils.Constants
 
 class CommentService(
-    private val repository: CommentRepository
+    private val commentRepository: CommentRepository,
+    private val userRepository: UserRepository
 ) {
 
     suspend fun addComment(request: AddCommentRequest, userId: String): ValidationEvent {
@@ -18,9 +21,14 @@ class CommentService(
                 return ValidationEvent.CommentTooLong
             }
         }
-        repository.addComment(
+
+        val user = userRepository.getUserById(userId) ?: return ValidationEvent.UserNotFound
+        commentRepository.addComment(
             Comment(
                 userId = userId,
+                username = user.username,
+                profilePictureUrl = user.profileImageUrl,
+                likeCount = 0,
                 postId = request.postId,
                 comment = request.comment,
                 timestamp = System.currentTimeMillis()
@@ -30,25 +38,26 @@ class CommentService(
     }
 
     suspend fun deleteComment(commentId: String): Boolean {
-        return repository.deleteComment(commentId)
+        return commentRepository.deleteComment(commentId)
     }
 
-    suspend fun getCommentByPost(postId: String): List<Comment> {
-        return repository.getCommentForPost(postId)
+    suspend fun getCommentForPost(postId: String,ownUserId:String): List<CommentResponse> {
+        return commentRepository.getCommentForPost(postId,ownUserId)
     }
 
     suspend fun getCommentById(commentId: String): Comment? {
-        return repository.getComment(commentId)
+        return commentRepository.getComment(commentId)
     }
 
     suspend fun deleteCommentForPost(postId: String) {
-        repository.deleteCommentsForPost(postId)
+        commentRepository.deleteCommentsForPost(postId)
     }
 
 
     sealed class ValidationEvent {
         object FieldEmpty : ValidationEvent()
         object CommentTooLong : ValidationEvent()
+        object UserNotFound : ValidationEvent()
         object Success : ValidationEvent()
     }
 }

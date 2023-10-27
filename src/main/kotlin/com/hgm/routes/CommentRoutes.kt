@@ -36,6 +36,7 @@ fun Route.addComment(
                         )
                     )
                 }
+
                 is CommentService.ValidationEvent.FieldEmpty -> {
                     call.respond(
                         BaseResponse<Unit>(
@@ -44,6 +45,7 @@ fun Route.addComment(
                         )
                     )
                 }
+
                 is CommentService.ValidationEvent.Success -> {
                     activityService.createCommentActivity(
                         byUserId = call.userId,
@@ -57,13 +59,22 @@ fun Route.addComment(
                         )
                     )
                 }
+
+                is CommentService.ValidationEvent.UserNotFound -> {
+                    call.respond(
+                        BaseResponse<Unit>(
+                            successful = false,
+                            message = ApiResponseMessage.USER_NOT_FOUND
+                        )
+                    )
+                }
             }
         }
     }
 }
 
 
-fun Route.getCommentByPost(
+fun Route.getCommentForPost(
     commentService: CommentService,
 ) {
     authenticate {
@@ -72,7 +83,7 @@ fun Route.getCommentByPost(
                 call.respond(HttpStatusCode.BadRequest)
                 return@get
             }
-            val comments = commentService.getCommentByPost(postId)
+            val comments = commentService.getCommentForPost(postId,call.userId)
             call.respond(HttpStatusCode.OK, comments)
         }
     }

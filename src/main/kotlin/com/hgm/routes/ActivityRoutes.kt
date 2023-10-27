@@ -11,7 +11,6 @@ import io.ktor.response.*
 import io.ktor.routing.*
 
 
-
 fun Route.getActivities(
     service: ActivityService
 ) {
@@ -22,7 +21,11 @@ fun Route.getActivities(
             val pageSize =
                 call.parameters[QueryParams.PARAM_PAGE_SIZE]?.toIntOrNull() ?: Constants.DEFAULT_ACTIVITY_PAGE_SIZE
 
-            val activities = service.getActivitiesForUser(call.userId, page, pageSize)
+            val activities = service.getActivitiesForUser(
+                userId = call.userId,
+                page = page,
+                pageSize = pageSize
+            )
 
 
             call.respond(

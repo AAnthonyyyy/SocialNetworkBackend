@@ -44,7 +44,7 @@ fun Route.createPost(
                     }
 
                     is PartData.FileItem -> {
-                        fileName=postData.save(Constants.POST_PICTURE_PATH)
+                        fileName = postData.save(Constants.POST_PICTURE_PATH)
                     }
 
                     is PartData.BinaryItem -> Unit
@@ -82,8 +82,6 @@ fun Route.createPost(
 }
 
 
-
-
 fun Route.getPostsForFollows(
     postService: PostService,
 ) {
@@ -109,7 +107,6 @@ fun Route.getPostsForProfile(
 ) {
     authenticate {
         get("/api/user/post") {
-            //.......
             val userId = call.parameters[QueryParams.PARAM_USER_ID] ?: call.userId
             val page =
                 call.parameters[QueryParams.PARAM_PAGE]?.toIntOrNull() ?: Constants.DEFAULT_POST_PAGE
@@ -163,6 +160,31 @@ fun Route.deletePost(
             } else {
                 call.respond(HttpStatusCode.Unauthorized)
             }
+        }
+    }
+}
+
+
+fun Route.getPostDetail(
+    postService: PostService,
+) {
+    authenticate {
+        get("/api/post/detail") {
+            val postId = call.parameters[QueryParams.PARAM_POST_ID] ?: kotlin.run {
+                call.respond(HttpStatusCode.BadRequest)
+                return@get
+            }
+            val post = postService.getPostDetails(call.userId, postId) ?: kotlin.run {
+                call.respond(HttpStatusCode.NotFound)
+                return@get
+            }
+            call.respond(
+                HttpStatusCode.OK,
+                BaseResponse(
+                    successful = true,
+                    data = post
+                )
+            )
         }
     }
 }

@@ -100,7 +100,7 @@ class UserService(
                 bio = user.bio,
                 isFollowing = isFollowing
             )
-        }.filter { it.userId == userId }
+        }.filter { it.userId!=userId }
     }
 
     sealed class ValidationEvent {

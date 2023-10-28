@@ -43,8 +43,8 @@ fun Application.configureRouting() {
         deletePost(postService, likeService, commentService)
 
         //点赞路由
-        likePost(likeService, activityService)
-        unlikePost(likeService)
+        likeParent(likeService, activityService)
+        unlikeParent(likeService)
         getLikesForParent(likeService)
 
         //评论路由

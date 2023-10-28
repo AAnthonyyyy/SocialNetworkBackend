@@ -1,11 +1,12 @@
 package com.hgm.routes
 
-import com.hgm.data.requests.LikeRequest
+import com.hgm.data.requests.LikeUpdateRequest
 import com.hgm.data.responses.BaseResponse
 import com.hgm.data.utils.ParentType
 import com.hgm.service.ActivityService
 import com.hgm.service.LikeService
 import com.hgm.utils.ApiResponseMessage
+import com.hgm.utils.Constants
 import com.hgm.utils.QueryParams
 import com.hgm.utils.userId
 import io.ktor.application.*
@@ -15,13 +16,13 @@ import io.ktor.request.*
 import io.ktor.response.*
 import io.ktor.routing.*
 
-fun Route.likePost(
+fun Route.likeParent(
     likeService: LikeService,
     activityService: ActivityService
 ) {
     authenticate {
         post("/api/like/likes") {
-            val request = call.receiveOrNull<LikeRequest>() ?: kotlin.run {
+            val request = call.receiveOrNull<LikeUpdateRequest>() ?: kotlin.run {
                 call.respond(HttpStatusCode.BadRequest)
                 return@post
             }
@@ -55,23 +56,25 @@ fun Route.likePost(
 }
 
 
-fun Route.unlikePost(
+fun Route.unlikeParent(
     likeService: LikeService,
 ) {
     authenticate {
         delete("/api/like/unlike") {
-            val request = call.receiveOrNull<LikeRequest>() ?: kotlin.run {
+            val parentId = call.parameters[QueryParams.PARAM_PARENT_ID] ?: kotlin.run {
                 call.respond(HttpStatusCode.BadRequest)
                 return@delete
             }
-
-            val unlikeSuccessful = likeService.unlikePost(call.userId, request.parentId,request.parentType)
-            if (unlikeSuccessful) {
+            val parentType = call.parameters[QueryParams.PARAM_PARENT_TYPE]?.toIntOrNull() ?: kotlin.run {
+                call.respond(HttpStatusCode.BadRequest)
+                return@delete
+            }
+            val unlikeSuccessful = likeService.unlikePost(call.userId, parentId, parentType)
+            if(unlikeSuccessful) {
                 call.respond(
                     HttpStatusCode.OK,
                     BaseResponse<Unit>(
-                        successful = true,
-                        message = ApiResponseMessage.LIKE_POST_SUCCESSFUL
+                        successful = true
                     )
                 )
             } else {

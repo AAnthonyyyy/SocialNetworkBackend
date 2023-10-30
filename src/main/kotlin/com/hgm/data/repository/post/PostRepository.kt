@@ -18,10 +18,11 @@ interface PostRepository {
     ): List<Post>
 
     suspend fun getPostsForProfile(
+        ownUserId: String,
         userId: String,
         page: Int = DEFAULT_POST_PAGE,
         pageSize: Int = DEFAULT_POST_PAGE_SIZE
-    ): List<Post>
+    ): List<PostResponse>
 
     suspend fun getPost(postId: String): Post?
 

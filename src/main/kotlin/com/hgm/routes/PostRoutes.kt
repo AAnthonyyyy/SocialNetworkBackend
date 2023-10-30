@@ -115,6 +115,7 @@ fun Route.getPostsForProfile(
 
 
             val posts = postService.getPostsForProfile(
+                ownUserId = call.userId,
                 userId = userId,
                 page = page,
                 pageSize = pageSize

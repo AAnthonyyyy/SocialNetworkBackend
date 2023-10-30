@@ -9,7 +9,6 @@ import org.litote.kmongo.and
 import org.litote.kmongo.coroutine.CoroutineDatabase
 import org.litote.kmongo.eq
 import org.litote.kmongo.`in`
-import org.litote.kmongo.project
 
 class PostRepositoryImpl(
     db: CoroutineDatabase
@@ -29,13 +28,13 @@ class PostRepositoryImpl(
     }
 
     override suspend fun getPostsByFollows(
-        userId: String,
+        ownUserId: String,
         page: Int,
         pageSize: Int
-    ): List<Post> {
+    ): List<PostResponse> {
         //获取我关注列表中所有人的ID
         val userIdFromFollows = following.find(
-            Following::followingUserId eq userId
+            Following::followingUserId eq ownUserId
         )
             .toList()
             .map {
@@ -49,9 +48,37 @@ class PostRepositoryImpl(
             .limit(pageSize)
             .descendingSort(Post::timestamp)
             .toList()
+            .map { post ->
+                val isLiked = likes.findOne(
+                    and(
+                        Like::parentId eq post.id,
+                        Like::userId eq ownUserId
+                    )
+                ) != null
+
+                val user = users.findOneById(post.userId)
+
+                PostResponse(
+                    id = post.id,
+                    userId = post.userId,
+                    username = user?.username ?: "",
+                    imageUrl = post.imageUrl,
+                    profilePictureUrl = user?.profileImageUrl ?: "",
+                    description = post.description,
+                    likeCount = post.likeCount,
+                    commentCount = post.commentCount,
+                    isLiked = isLiked,
+                    isOwnPost = ownUserId == post.userId
+                )
+            }
     }
 
-    override suspend fun getPostsForProfile(ownUserId: String,userId: String, page: Int, pageSize: Int): List<PostResponse> {
+    override suspend fun getPostsForProfile(
+        ownUserId: String,
+        userId: String,
+        page: Int,
+        pageSize: Int
+    ): List<PostResponse> {
         val user = users.findOneById(userId) ?: return emptyList()
         //查询个人的所有帖子，降序显示
         return posts.find(Post::userId eq userId)
@@ -80,7 +107,6 @@ class PostRepositoryImpl(
                     isOwnPost = userId == post.userId
                 )
             }
-
     }
 
     override suspend fun getPost(postId: String): Post? {

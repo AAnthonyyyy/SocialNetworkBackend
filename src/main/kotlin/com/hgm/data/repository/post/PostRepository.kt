@@ -12,10 +12,10 @@ interface PostRepository {
     suspend fun deletePost(postId: String)
 
     suspend fun getPostsByFollows(
-        userId: String,
+        ownUserId: String,
         page: Int = DEFAULT_POST_PAGE,
         pageSize: Int = DEFAULT_POST_PAGE_SIZE
-    ): List<Post>
+    ): List<PostResponse>
 
     suspend fun getPostsForProfile(
         ownUserId: String,

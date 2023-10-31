@@ -7,6 +7,7 @@ import com.hgm.data.requests.CreateAccountRequest
 import com.hgm.data.requests.UpdateProfileRequest
 import com.hgm.data.responses.ProfileResponse
 import com.hgm.data.responses.UserItemResponse
+import com.hgm.utils.Constants
 
 class UserService(
     private val userRepository: UserRepository,
@@ -64,8 +65,8 @@ class UserService(
                 email = request.email,
                 username = request.username,
                 password = request.password,
-                profileImageUrl = "",
-                bannerUrl = "",
+                profileImageUrl = Constants.DEFAULT_PROFILE_PICTURE_PATH,
+                bannerUrl = Constants.DEFAULT_BANNER_PICTURE_PATH,
                 bio = "",
                 githubUrl = "",
                 instagramUrl = "",

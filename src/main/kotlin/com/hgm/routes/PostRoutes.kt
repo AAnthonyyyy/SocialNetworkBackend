@@ -169,24 +169,41 @@ fun Route.deletePost(
 fun Route.getPostDetail(
     postService: PostService,
 ) {
-    authenticate {
-        get("/api/post/detail") {
-            val postId = call.parameters[QueryParams.PARAM_POST_ID] ?: kotlin.run {
-                call.respond(HttpStatusCode.BadRequest)
-                return@get
-            }
-            val post = postService.getPostDetails(call.userId, postId) ?: kotlin.run {
-                call.respond(HttpStatusCode.NotFound)
-                return@get
-            }
-            call.respond(
-                HttpStatusCode.OK,
-                BaseResponse(
-                    successful = true,
-                    data = post
-                )
-            )
+    //authenticate {
+    //    get("/api/post/detail") {
+    //        val postId = call.parameters[QueryParams.PARAM_POST_ID] ?: kotlin.run {
+    //            call.respond(HttpStatusCode.BadRequest)
+    //            return@get
+    //        }
+    //        val post = postService.getPostDetails(call.userId, postId) ?: kotlin.run {
+    //            call.respond(HttpStatusCode.NotFound)
+    //            return@get
+    //        }
+    //        call.respond(
+    //            HttpStatusCode.OK,
+    //            BaseResponse(
+    //                successful = true,
+    //                data = post
+    //            )
+    //        )
+    //    }
+    //}
+    get("/api/post/detail") {
+        val postId = call.parameters[QueryParams.PARAM_POST_ID] ?: kotlin.run {
+            call.respond(HttpStatusCode.BadRequest)
+            return@get
         }
+        val post = postService.getPostDetails(call.userId, postId) ?: kotlin.run {
+            call.respond(HttpStatusCode.NotFound)
+            return@get
+        }
+        call.respond(
+            HttpStatusCode.OK,
+            BaseResponse(
+                successful = true,
+                data = post
+            )
+        )
     }
 }
 

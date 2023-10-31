@@ -2,21 +2,26 @@ package com.hgm.data.repository.comment
 
 import com.hgm.data.model.Comment
 import com.hgm.data.model.Like
+import com.hgm.data.model.Post
 import com.hgm.data.responses.CommentResponse
 import org.litote.kmongo.and
 import org.litote.kmongo.coroutine.CoroutineDatabase
 import org.litote.kmongo.eq
+import org.litote.kmongo.setValue
 
 class CommentRepositoryImpl(
     db: CoroutineDatabase
 ) : CommentRepository {
 
-    private val comments = db.getCollection<Comment>()
+    private val posts = db.getCollection<Post>()
     private val likes = db.getCollection<Like>()
+    private val comments = db.getCollection<Comment>()
 
 
     override suspend fun addComment(comment: Comment): String {
         comments.insertOne(comment)
+        val oldCommentCount = posts.findOneById(comment.postId)?.likeCount ?: 0
+        posts.updateOneById(comment.postId, setValue(Post::commentCount, oldCommentCount + 1))
         return comment.id
     }
 
@@ -30,7 +35,7 @@ class CommentRepositoryImpl(
         ).wasAcknowledged()//返回删除操作是否成功
     }
 
-    override suspend fun getCommentForPost(postId: String,ownUserId:String): List<CommentResponse> {
+    override suspend fun getCommentForPost(postId: String, ownUserId: String): List<CommentResponse> {
         return comments.find(Comment::postId eq postId).toList().map { comment ->
             //查询我是否点赞了评论
             val isLiked = likes.findOne(

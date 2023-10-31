@@ -17,4 +17,6 @@ object Constants {
     const val PROFILE_PICTURE_PATH = "build/resources/main/static/profile_pictures/"
     const val BANNER_PICTURE_PATH = "build/resources/main/static/banner_pictures/"
     const val POST_PICTURE_PATH = "build/resources/main/static/post_pictures/"
+    const val DEFAULT_PROFILE_PICTURE_PATH = "${BASE_URL}profile_pictures/default_avatar.svg"
+    const val DEFAULT_BANNER_PICTURE_PATH = "${BASE_URL}profile_pictures/default_banner.png"
 }

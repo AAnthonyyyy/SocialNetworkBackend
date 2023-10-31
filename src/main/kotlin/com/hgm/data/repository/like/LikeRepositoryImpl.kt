@@ -24,6 +24,7 @@ class LikeRepositoryImpl(
         val isUserExist = users.findOneById(userId) != null
 
         return if (isUserExist) {
+            //根据点赞类型更新点赞量
             when (parentType) {
                 ParentType.Post.type -> {
                     val post = posts.findOneById(parentId) ?: return false

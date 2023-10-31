@@ -10,11 +10,11 @@ class LikeService(
     private val userRepository: UserRepository,
     private val followRepository: FollowRepository
 ) {
-    suspend fun likePost(userId: String, parentId: String, parentType: Int): Boolean {
+    suspend fun likeParent(userId: String, parentId: String, parentType: Int): Boolean {
         return likeRepository.likePost(userId, parentId, parentType)
     }
 
-    suspend fun unlikePost(userId: String, parentId: String, parentType: Int): Boolean {
+    suspend fun unlikeParent(userId: String, parentId: String, parentType: Int): Boolean {
         return likeRepository.unlikePost(userId, parentId, parentType)
     }
 

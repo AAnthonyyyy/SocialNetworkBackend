@@ -169,31 +169,19 @@ fun Route.deletePost(
 fun Route.getPostDetail(
     postService: PostService,
 ) {
-    //authenticate {
-    //    get("/api/post/detail") {
-    //        val postId = call.parameters[QueryParams.PARAM_POST_ID] ?: kotlin.run {
-    //            call.respond(HttpStatusCode.BadRequest)
-    //            return@get
-    //        }
-    //        val post = postService.getPostDetails(call.userId, postId) ?: kotlin.run {
-    //            call.respond(HttpStatusCode.NotFound)
-    //            return@get
-    //        }
-    //        call.respond(
-    //            HttpStatusCode.OK,
-    //            BaseResponse(
-    //                successful = true,
-    //                data = post
-    //            )
-    //        )
-    //    }
-    //}
     get("/api/post/detail") {
+        val ownUserId = call.parameters[QueryParams.PARAM_USER_ID] ?: kotlin.run {
+            call.respond(HttpStatusCode.BadRequest)
+            return@get
+        }
         val postId = call.parameters[QueryParams.PARAM_POST_ID] ?: kotlin.run {
             call.respond(HttpStatusCode.BadRequest)
             return@get
         }
-        val post = postService.getPostDetails(call.userId, postId) ?: kotlin.run {
+
+        //这里不能使用call.userId因为没有进行身份验证，所以userId永远为空
+        //需要从客户端穿userId过来
+        val post = postService.getPostDetails(ownUserId, postId) ?: kotlin.run {
             call.respond(HttpStatusCode.NotFound)
             return@get
         }

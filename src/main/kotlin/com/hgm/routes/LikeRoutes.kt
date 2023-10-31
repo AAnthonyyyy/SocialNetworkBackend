@@ -6,7 +6,6 @@ import com.hgm.data.utils.ParentType
 import com.hgm.service.ActivityService
 import com.hgm.service.LikeService
 import com.hgm.utils.ApiResponseMessage
-import com.hgm.utils.Constants
 import com.hgm.utils.QueryParams
 import com.hgm.utils.userId
 import io.ktor.application.*
@@ -28,7 +27,7 @@ fun Route.likeParent(
             }
 
             val likeSuccessful =
-                likeService.likePost(call.userId, request.parentId, request.parentType)
+                likeService.likeParent(call.userId, request.parentId, request.parentType)
             if (likeSuccessful) {
                 activityService.createLikeActivity(
                     byUserId = call.userId,
@@ -69,7 +68,7 @@ fun Route.unlikeParent(
                 call.respond(HttpStatusCode.BadRequest)
                 return@delete
             }
-            val unlikeSuccessful = likeService.unlikePost(call.userId, parentId, parentType)
+            val unlikeSuccessful = likeService.unlikeParent(call.userId, parentId, parentType)
             if(unlikeSuccessful) {
                 call.respond(
                     HttpStatusCode.OK,

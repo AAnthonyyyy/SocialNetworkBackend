@@ -17,7 +17,7 @@ class PostRepositoryImpl(
     private val posts = db.getCollection<Post>()
     private val users = db.getCollection<User>()
     private val likes = db.getCollection<Like>()
-    private val following = db.getCollection<Following>()
+    private val followings = db.getCollection<Following>()
 
     override suspend fun createPost(post: Post): Boolean {
         return posts.insertOne(post).wasAcknowledged()
@@ -33,7 +33,7 @@ class PostRepositoryImpl(
         pageSize: Int
     ): List<PostResponse> {
         //获取我关注列表中所有人的ID
-        val userIdFromFollows = following.find(
+        val userIdFromFollows = followings.find(
             Following::followingUserId eq ownUserId
         )
             .toList()
@@ -87,10 +87,11 @@ class PostRepositoryImpl(
             .descendingSort(Post::timestamp)
             .toList()
             .map { post ->
+                //查询我是否有点赞
                 val isLiked = likes.findOne(
                     and(
-                        Like::parentId eq post.id,
-                        Like::userId eq ownUserId
+                        Like::userId eq ownUserId,
+                        Like::parentId eq post.id
                     )
                 ) != null
 
@@ -113,21 +114,27 @@ class PostRepositoryImpl(
         return posts.findOneById(postId)
     }
 
-    override suspend fun getPostDetails(userId: String, postId: String): PostResponse? {
-        val isLiked = likes.findOne(Like::userId eq userId) != null
+    override suspend fun getPostDetails(ownUserId: String, postId: String): PostResponse? {
         val post = posts.findOneById(postId) ?: return null
         val user = users.findOneById(post.userId) ?: return null
+        val isLiked = likes.findOne(
+            and(
+                Like::userId eq ownUserId,
+                Like::parentId eq post.id
+            )
+        ) != null
+
         return PostResponse(
             id = post.id,
-            userId = user.id,
+            userId = post.userId,
             username = user.username,
             imageUrl = post.imageUrl,
-            profilePictureUrl = user.profileImageUrl,
+            profilePictureUrl = post.imageUrl,
             description = post.description,
             likeCount = post.likeCount,
             commentCount = post.commentCount,
             isLiked = isLiked,
-            isOwnPost = userId == post.userId
+            isOwnPost = ownUserId == post.userId
         )
     }
 }

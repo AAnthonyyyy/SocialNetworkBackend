@@ -2,9 +2,12 @@ package com.hgm.plugins
 
 import com.hgm.routes.*
 import com.hgm.service.*
+import com.hgm.service.chat.ChatController
+import com.hgm.service.chat.ChatService
 import io.ktor.application.*
 import io.ktor.http.content.*
 import io.ktor.routing.*
+import io.ktor.util.pipeline.*
 import org.koin.ktor.ext.inject
 
 fun Application.configureRouting() {
@@ -15,6 +18,8 @@ fun Application.configureRouting() {
     val commentService: CommentService by inject()
     val activityService: ActivityService by inject()
     val skillService: SkillService by inject()
+    val chatService: ChatService by inject()
+    val chatController: ChatController by inject()
 
     val jwtAudience = environment.config.property("jwt.audience").getString()
     val jwtIssuer = environment.config.property("jwt.domain").getString()
@@ -55,8 +60,13 @@ fun Application.configureRouting() {
         //活动路由
         getActivities(activityService)
 
+        //技巧
         getSkills(skillService)
 
+        //聊天
+        getChatsForUser(chatService)
+        getMessagesForChat(chatService)
+        chatWebSocket(chatController)
 
         //静态路由用于显示资源图片
         static {

@@ -3,6 +3,8 @@ package com.hgm.di
 import com.google.gson.Gson
 import com.hgm.data.repository.activity.ActivityRepository
 import com.hgm.data.repository.activity.ActivityRepositoryImpl
+import com.hgm.data.repository.chat.ChatRepository
+import com.hgm.data.repository.chat.ChatRepositoryImpl
 import com.hgm.data.repository.comment.CommentRepository
 import com.hgm.data.repository.comment.CommentRepositoryImpl
 import com.hgm.data.repository.follow.FollowRepository
@@ -16,6 +18,8 @@ import com.hgm.data.repository.skill.SkillRepositoryImpl
 import com.hgm.data.repository.user.UserRepository
 import com.hgm.data.repository.user.UserRepositoryImpl
 import com.hgm.service.*
+import com.hgm.service.chat.ChatController
+import com.hgm.service.chat.ChatService
 import com.hgm.utils.Constants.DATABASE_NAME
 import org.koin.dsl.module
 import org.litote.kmongo.coroutine.coroutine
@@ -52,6 +56,9 @@ val mainModule = module {
     single<SkillRepository> {
         SkillRepositoryImpl(get())
     }
+    single<ChatRepository> {
+        ChatRepositoryImpl(get())
+    }
 
 
     // Service
@@ -59,9 +66,12 @@ val mainModule = module {
     single { FollowService(get()) }
     single { PostService(get()) }
     single { LikeService(get(), get(), get()) }
-    single { CommentService(get(),get()) }
+    single { CommentService(get(), get()) }
     single { ActivityService(get(), get(), get()) }
     single { SkillService(get()) }
+    single { ChatService(get()) }
 
     single { Gson() }
+
+    single { ChatController(get()) }
 }

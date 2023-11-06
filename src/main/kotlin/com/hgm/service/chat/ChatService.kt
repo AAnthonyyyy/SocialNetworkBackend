@@ -3,6 +3,7 @@ package com.hgm.service.chat
 import com.hgm.data.model.Chat
 import com.hgm.data.model.Message
 import com.hgm.data.repository.chat.ChatRepository
+import com.hgm.data.responses.ChatDto
 
 class ChatService(
     private val repository: ChatRepository
@@ -19,7 +20,7 @@ class ChatService(
         return repository.getMessagesForChat(chatId, page, pageSize)
     }
 
-    suspend fun getChatsForUser(ownUserId: String): List<Chat> {
+    suspend fun getChatsForUser(ownUserId: String): List<ChatDto> {
         return repository.getChatsForUser(ownUserId)
     }
 }

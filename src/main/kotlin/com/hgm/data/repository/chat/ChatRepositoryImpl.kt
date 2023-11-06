@@ -3,6 +3,7 @@ package com.hgm.data.repository.chat
 import com.hgm.data.model.Chat
 import com.hgm.data.model.Message
 import com.hgm.data.model.User
+import com.hgm.data.responses.ChatDto
 import org.litote.kmongo.and
 import org.litote.kmongo.contains
 import org.litote.kmongo.coroutine.CoroutineDatabase
@@ -30,11 +31,24 @@ class ChatRepositoryImpl(
             .toList()
     }
 
-    override suspend fun getChatsForUser(ownUserId: String): List<Chat> {
+    override suspend fun getChatsForUser(ownUserId: String): List<ChatDto> {
         //查询自己id的所有对话列表
         return chats.find(Chat::userIds contains ownUserId)
             .descendingSort(Chat::timestamp)
             .toList()
+            .map { chat ->
+                val otherUserId = chat.userIds.find { it != ownUserId }
+                val user=users.findOneById(otherUserId ?: "")
+                val lastMessage=messages.findOneById(chat.lastMessageId)
+                ChatDto(
+                    chatId = chat.id,
+                    remoteUserId = user?.id,
+                    remoteUsername = user?.username,
+                    remoteProfilePictureUrl = user?.profileImageUrl,
+                    lastMessage = lastMessage?.text,
+                    timestamp = chat.timestamp
+                )
+            }
     }
 
     override suspend fun doesChatBelongUser(chatId: String, ownUserId: String): Boolean {

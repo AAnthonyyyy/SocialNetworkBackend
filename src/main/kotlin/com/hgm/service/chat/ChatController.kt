@@ -1,7 +1,7 @@
 package com.hgm.service.chat
 
 import com.hgm.data.repository.chat.ChatRepository
-import com.hgm.data.webcosket.WsMessage
+import com.hgm.data.webcosket.WsServerMessage
 import io.ktor.http.cio.websocket.*
 import java.util.concurrent.ConcurrentHashMap
 
@@ -24,7 +24,7 @@ class ChatController(
         }
     }
 
-    suspend fun sendMessage(frameText: String, message: WsMessage) {
+    suspend fun sendMessage(frameText: String, message: WsServerMessage) {
         //从在线用户中找到发信息的用户
         onlineUsers[message.sendId]?.send(Frame.Text(frameText))
         onlineUsers[message.receiveId]?.send(Frame.Text(frameText))

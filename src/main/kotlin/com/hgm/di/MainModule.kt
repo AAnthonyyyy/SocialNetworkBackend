@@ -1,6 +1,7 @@
 package com.hgm.di
 
 import com.google.gson.Gson
+import com.hgm.data.model.Message
 import com.hgm.data.repository.activity.ActivityRepository
 import com.hgm.data.repository.activity.ActivityRepositoryImpl
 import com.hgm.data.repository.chat.ChatRepository
@@ -21,6 +22,8 @@ import com.hgm.service.*
 import com.hgm.service.chat.ChatController
 import com.hgm.service.chat.ChatService
 import com.hgm.utils.Constants.DATABASE_NAME
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import org.koin.dsl.module
 import org.litote.kmongo.coroutine.coroutine
 import org.litote.kmongo.reactivestreams.KMongo

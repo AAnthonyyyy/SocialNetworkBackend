@@ -1,7 +1,7 @@
 package com.hgm.routes
 
 import com.google.gson.Gson
-import com.hgm.data.webcosket.WsMessage
+import com.hgm.data.webcosket.WsServerMessage
 import com.hgm.service.chat.ChatController
 import com.hgm.service.chat.ChatService
 import com.hgm.service.chat.ChatSession
@@ -116,7 +116,7 @@ suspend fun handleWebSocket(
 
     when (type) {
         WebSocketObject.MESSAGE.ordinal -> {
-            val message = gson.fromJsonOrNull(json, WsMessage::class.java) ?: return
+            val message = gson.fromJsonOrNull(json, WsServerMessage::class.java) ?: return
             chatController.sendMessage(frameText, message)
         }
 

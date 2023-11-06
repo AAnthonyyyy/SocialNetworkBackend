@@ -2,6 +2,7 @@ package com.hgm.data.repository.chat
 
 import com.hgm.data.model.Chat
 import com.hgm.data.model.Message
+import com.hgm.data.responses.ChatDto
 
 interface ChatRepository {
 
@@ -13,7 +14,7 @@ interface ChatRepository {
         pageSize: Int
     ): List<Message>
 
-    suspend fun getChatsForUser(ownUserId: String): List<Chat>
+    suspend fun getChatsForUser(ownUserId: String): List<ChatDto>
 
     suspend fun insertMessage(message: Message)
 

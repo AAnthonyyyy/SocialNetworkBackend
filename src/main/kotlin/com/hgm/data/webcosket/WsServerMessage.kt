@@ -2,7 +2,7 @@ package com.hgm.data.webcosket
 
 import com.hgm.data.model.Message
 
-data class WsMessage(
+data class WsServerMessage(
     val sendId: String,
     val receiveId: String,
     val text: String,

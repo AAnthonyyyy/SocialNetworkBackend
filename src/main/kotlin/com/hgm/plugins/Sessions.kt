@@ -1,6 +1,7 @@
 package com.hgm.plugins
 
 import com.hgm.service.chat.ChatSession
+import com.hgm.utils.userId
 import io.ktor.application.*
 import io.ktor.sessions.*
 import io.ktor.util.*
@@ -14,8 +15,8 @@ fun Application.configureSessions() {
     intercept(ApplicationCallPipeline.Features) {
         if (call.sessions.get<ChatSession>() == null) {
             //如果没有会话则自动生成一个
-            val userId = call.parameters["userId"] ?: return@intercept
-            call.sessions.set(ChatSession(userId, generateNonce()))
+            //val userId = call.parameters["userId"] ?: return@intercept
+            call.sessions.set(ChatSession(call.userId, generateNonce()))
         }
     }
 }

@@ -1,6 +1,7 @@
 package com.hgm.routes
 
 import com.google.gson.Gson
+import com.hgm.data.webcosket.WsClientMessage
 import com.hgm.data.webcosket.WsServerMessage
 import com.hgm.service.chat.ChatController
 import com.hgm.service.chat.ChatService
@@ -64,62 +65,62 @@ fun Route.getMessagesForChat(service: ChatService) {
 
 
 fun Route.chatWebSocket(chatController: ChatController) {
-    webSocket("/api/chat/websocket") {
-        //接收会话
-        val session = call.sessions.get<ChatSession>() ?: kotlin.run {
-            close(CloseReason(CloseReason.Codes.VIOLATED_POLICY, "没有会话"))
-            return@webSocket
-        }
+    authenticate {
+        webSocket("/api/chat/websocket") {
+            //接收会话
+            val session = call.sessions.get<ChatSession>() ?: kotlin.run {
+                close(CloseReason(CloseReason.Codes.VIOLATED_POLICY, "没有会话"))
+                return@webSocket
+            }
+            chatController.onJoin(session, this)
+            println("WebSocket 连接成功")
 
-        chatController.onJoin(session, this)
+            try {
+                //接收传入的消息
+                incoming.consumeEach { frame ->
+                    when (frame) {
+                        is Frame.Text -> {
+                            // json格式：0#{"name" : "hgm"}
+                            val frameText = frame.readText()
+                            println("接收到的消息：$frameText")
+                            val tagIndex = frameText.indexOf("#")
+                            if (tagIndex == -1) {
+                                return@consumeEach
+                            }
 
-        try {
-            //接收传入的消息
-            incoming.consumeEach { frame ->
-                when (frame) {
-                    is Frame.Text -> {
-                        // json格式：0#{"name" : "hgm"}
-                        val frameText = frame.readText()
-                        val tagIndex = frameText.indexOf("#")
-                        if (tagIndex == -1) {
-                            return@consumeEach
+                            //截取类型和内容
+                            val type = frameText.substring(0, tagIndex).toIntOrNull() ?: return@consumeEach
+                            val json = frameText.substring(tagIndex + 1, frameText.length)
+                            handleWebSocket(call.userId, chatController, frameText, type, json)
                         }
 
-                        //截取类型和内容
-                        val type = frameText.substring(0, tagIndex).toIntOrNull() ?: return@consumeEach
-                        val json = frameText.substring(tagIndex + 1, frameText.length)
-                        handleWebSocket(this, session, chatController, frameText, type, json)
+                        else -> Unit
                     }
-
-                    else -> Unit
                 }
+            } catch (e: Exception) {
+                e.printStackTrace()
+            } finally {
+                //关闭websocket
+                chatController.disConnect(session.userId)
             }
-        } catch (e: Exception) {
-            e.printStackTrace()
-        } finally {
-            //关闭websocket
-            chatController.disConnect(session.userId)
         }
     }
 }
 
 
 suspend fun handleWebSocket(
-    webSocketSession: WebSocketSession,
-    session: ChatSession,
+    ownUserId:String,
     chatController: ChatController,
     frameText: String,
     type: Int,
     json: String
 ) {
     val gson by inject<Gson>(Gson::class.java)
-
     when (type) {
         WebSocketObject.MESSAGE.ordinal -> {
-            val message = gson.fromJsonOrNull(json, WsServerMessage::class.java) ?: return
-            chatController.sendMessage(frameText, message)
+            val message = gson.fromJsonOrNull(json, WsClientMessage::class.java) ?: return
+            chatController.sendMessage(ownUserId,frameText, message)
         }
-
         else -> Unit
     }
 }

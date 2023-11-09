@@ -68,15 +68,15 @@ fun Route.chatWebSocket(chatController: ChatController) {
     authenticate {
         webSocket("/api/chat/websocket") {
             //接收会话
-            val session = call.sessions.get<ChatSession>() ?: kotlin.run {
-                close(CloseReason(CloseReason.Codes.VIOLATED_POLICY, "没有会话"))
-                return@webSocket
-            }
-            chatController.onJoin(session, this)
+            //val session = call.sessions.get<ChatSession>() ?: kotlin.run {
+            //    close(CloseReason(CloseReason.Codes.VIOLATED_POLICY, "没有会话"))
+            //    return@webSocket
+            //}
+            chatController.onJoin(call.userId, this)
             println("WebSocket 连接成功")
 
             try {
-                //接收传入的消息
+                //接收客户端传入的消息
                 incoming.consumeEach { frame ->
                     when (frame) {
                         is Frame.Text -> {
@@ -101,7 +101,7 @@ fun Route.chatWebSocket(chatController: ChatController) {
                 e.printStackTrace()
             } finally {
                 //关闭websocket
-                chatController.disConnect(session.userId)
+                chatController.disConnect(call.userId)
             }
         }
     }
@@ -118,8 +118,9 @@ suspend fun handleWebSocket(
     val gson by inject<Gson>(Gson::class.java)
     when (type) {
         WebSocketObject.MESSAGE.ordinal -> {
+            //把传入的json转成客户端信息对象
             val message = gson.fromJsonOrNull(json, WsClientMessage::class.java) ?: return
-            chatController.sendMessage(ownUserId,frameText, message)
+            chatController.sendMessage(ownUserId,gson, message)
         }
         else -> Unit
     }

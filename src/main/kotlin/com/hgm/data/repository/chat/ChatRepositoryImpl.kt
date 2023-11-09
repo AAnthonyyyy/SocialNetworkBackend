@@ -38,8 +38,8 @@ class ChatRepositoryImpl(
             .toList()
             .map { chat ->
                 val otherUserId = chat.userIds.find { it != ownUserId }
-                val user=users.findOneById(otherUserId ?: "")
-                val lastMessage=messages.findOneById(chat.lastMessageId)
+                val user = users.findOneById(otherUserId ?: "")
+                val lastMessage = messages.findOneById(chat.lastMessageId)
                 ChatDto(
                     chatId = chat.id,
                     remoteUserId = user?.id,
@@ -60,19 +60,20 @@ class ChatRepositoryImpl(
         messages.insertOne(message)
     }
 
-    override suspend fun insertChat(userId1: String, userId2: String, messageId: String) {
+    override suspend fun insertChat(userId1: String, userId2: String, messageId: String): String {
         val chat = Chat(
             userIds = listOf(userId1, userId2),
             lastMessageId = messageId,
             timestamp = System.currentTimeMillis()
         )
         val chatId = chats.insertOne(chat).insertedId?.asObjectId().toString()
-        //如果是第一次聊天是没有chatId的，只是把消息记录到数据库，在后期创建chatId的时候再去更新消息字段中的chatId
+        println("chatId1: $chatId")
         messages.updateOneById(messageId, setValue(Message::chatId, chatId))
+        return chat.id
     }
 
     override suspend fun doesChatByUsersExist(userId1: String, userId2: String): Boolean {
-        //return chats.find(
+        //return chats.find(A
         //    "{${MongoOperator.and}: [ {\"users.id\":\"$userId1\"},{\"users.id\":\"$userId2\"} ]}"
         //).first() != null
         return chats.find(

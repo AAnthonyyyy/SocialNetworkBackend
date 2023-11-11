@@ -2,13 +2,10 @@ package com.hgm.routes
 
 import com.google.gson.Gson
 import com.hgm.data.requests.CreatePostRequest
-import com.hgm.data.requests.DeletePostRequest
-import com.hgm.data.requests.UpdateProfileRequest
 import com.hgm.data.responses.BaseResponse
 import com.hgm.service.CommentService
 import com.hgm.service.LikeService
 import com.hgm.service.PostService
-import com.hgm.service.UserService
 import com.hgm.utils.*
 import io.ktor.application.*
 import io.ktor.auth.*
@@ -136,21 +133,22 @@ fun Route.deletePost(
 ) {
     authenticate {
         delete("/api/post/delete") {
-            val request = call.receiveOrNull<DeletePostRequest>() ?: kotlin.run {
+            val postId = call.parameters[QueryParams.PARAM_POST_ID] ?: kotlin.run {
                 call.respond(HttpStatusCode.BadRequest)
                 return@delete
             }
+            println("postId:$postId")
 
-            val post = postService.getPost(request.postId) ?: kotlin.run {
+            val post = postService.getPost(postId) ?: kotlin.run {
                 call.respond(HttpStatusCode.NotFound)
                 return@delete
             }
 
             if (call.userId == post.userId) {
                 //删除帖子也要把关于帖子的点赞以及评论删除
-                postService.deletePost(request.postId)
-                likeService.removeLikeForParent(request.postId)
-                commentService.deleteCommentForPost(request.postId)
+                postService.deletePost(postId)
+                likeService.removeLikeForParent(postId)
+                commentService.deleteCommentForPost(postId)
                 call.respond(
                     HttpStatusCode.OK,
                     BaseResponse<Unit>(

@@ -5,6 +5,7 @@ import com.hgm.data.model.User
 import org.litote.kmongo.and
 import org.litote.kmongo.coroutine.CoroutineDatabase
 import org.litote.kmongo.eq
+import org.litote.kmongo.inc
 
 class FollowRepositoryImpl(
     db: CoroutineDatabase
@@ -24,6 +25,16 @@ class FollowRepositoryImpl(
         if (!doesFollowingUserExist || !doesFollowedUserExist) {
             return false
         }
+        //关注者的关注量+1
+        users.updateOneById(
+            followingUserId,
+            inc(User::followingCount,1)
+        )
+        //被关注者的粉丝量+1
+        users.updateOneById(
+            followedUserId,
+            inc(User::followedCount,1)
+        )
         follows.insertOne(
             Following(followingUserId, followedUserId)
         )
@@ -39,6 +50,18 @@ class FollowRepositoryImpl(
                 Following::followedUserId eq followedUserId
             )
         )
+        if (deleteResult.deletedCount>0){
+            //关注者的关注量+1
+            users.updateOneById(
+                followingUserId,
+                inc(User::followingCount,-1)
+            )
+            //被关注者的粉丝量+1
+            users.updateOneById(
+                followedUserId,
+                inc(User::followedCount,-1)
+            )
+        }
         return deleteResult.deletedCount > 0
     }
 
